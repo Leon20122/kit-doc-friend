@@ -53,6 +53,30 @@ export interface TimelineStep {
   status: 'completed' | 'in-progress' | 'pending';
 }
 
+export interface HistoryEntry {
+  id: string;
+  title: string;
+  author: string;
+  items: string[];
+}
+
+export interface BannerConfig {
+  emoji: string;
+  title: string;
+  subtitle: string;
+  version: string;
+  statusText: string;
+  bgImage: string;
+}
+
+export interface ObjetivosSection {
+  id: string;
+  type: 'callout' | 'checklist' | 'scope' | 'criteria' | 'custom';
+  title: string;
+  emoji: string;
+  content: string;
+}
+
 export interface ProjectData {
   checklists: Record<string, ChecklistGroup>;
   tables: Record<string, EditableTable>;
@@ -62,6 +86,9 @@ export interface ProjectData {
   images: Record<string, string[]>;
   teamMembers: TeamMember[];
   timeline: TimelineStep[];
+  historyEntries: HistoryEntry[];
+  banner: BannerConfig;
+  objetivosSections: ObjetivosSection[];
 }
 
 const defaultData: ProjectData = {
@@ -342,6 +369,51 @@ const defaultData: ProjectData = {
     { id: 'tl6', label: 'Pruebas y Mediciones', status: 'pending' },
     { id: 'tl7', label: 'Entrega Final', status: 'pending' },
   ],
+  historyEntries: [
+    {
+      id: 'he1',
+      title: 'Versión 2.1 — 2023-10-27',
+      author: 'Alejandro G.',
+      items: [
+        '📝 Ajuste de resistencia Ree de 14.3kΩ a 15kΩ (valor comercial)',
+        '📝 Actualización de punto de operación DC',
+        '🐛 Corrección de valor Iee en tabla de cálculos',
+      ],
+    },
+    {
+      id: 'he2',
+      title: 'Versión 2.0 — 2023-10-25',
+      author: 'Equipo',
+      items: [
+        '✨ Rediseño completo de etapa de ganancia',
+        '✨ Adición de compensación Miller (Cc = 33pF)',
+        '📝 Actualización de esquemático completo',
+        '📝 Re-simulación de todos los análisis',
+        '🐛 Corrección de inestabilidad (margen de fase)',
+      ],
+    },
+    {
+      id: 'he3',
+      title: 'Versión 1.0 — 2023-10-15',
+      author: 'Equipo',
+      items: [
+        '✨ Creación de estructura del documento',
+        '✨ Definición de objetivos y alcance',
+        '✨ Marco teórico inicial',
+        '✨ Primer diseño de circuito',
+        '✨ Lista de componentes (BOM) v1',
+      ],
+    },
+  ],
+  banner: {
+    emoji: '⚡',
+    title: 'Op-Amp Discreto con BJTs',
+    subtitle: 'Documentación del Proyecto',
+    version: 'v2.1',
+    statusText: 'Implementación en Curso',
+    bgImage: '',
+  },
+  objetivosSections: [],
 };
 
 const STORAGE_KEY = 'opamp-project-data';
@@ -351,13 +423,15 @@ function loadData(): ProjectData {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      // Merge with defaults for new fields
       return {
         ...defaultData,
         ...parsed,
         images: parsed.images || {},
         teamMembers: parsed.teamMembers || defaultData.teamMembers,
         timeline: parsed.timeline || defaultData.timeline,
+        historyEntries: parsed.historyEntries || defaultData.historyEntries,
+        banner: parsed.banner || defaultData.banner,
+        objetivosSections: parsed.objetivosSections || defaultData.objetivosSections,
       };
     }
   } catch {}
@@ -366,6 +440,15 @@ function loadData(): ProjectData {
 
 function saveData(data: ProjectData) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function getInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(w => w[0]?.toUpperCase() || '')
+    .slice(0, 2)
+    .join('');
 }
 
 export function useProjectStore() {
@@ -418,6 +501,25 @@ export function useProjectStore() {
         checklists: {
           ...prev.checklists,
           [groupId]: { ...group, items: group.items.filter(i => i.id !== itemId) },
+        },
+      };
+    });
+  }, []);
+
+  const updateCheckItemText = useCallback((groupId: string, itemId: string, text: string) => {
+    setData(prev => {
+      const group = prev.checklists[groupId];
+      if (!group) return prev;
+      return {
+        ...prev,
+        checklists: {
+          ...prev.checklists,
+          [groupId]: {
+            ...group,
+            items: group.items.map(item =>
+              item.id === itemId ? { ...item, text } : item
+            ),
+          },
         },
       };
     });
@@ -540,13 +642,19 @@ export function useProjectStore() {
     }));
   }, []);
 
-  // Team members
+  // Team members - auto-update initials from name
   const updateTeamMember = useCallback((memberId: string, field: keyof TeamMember, value: string | boolean) => {
     setData(prev => ({
       ...prev,
-      teamMembers: prev.teamMembers.map(m =>
-        m.id === memberId ? { ...m, [field]: value } : m
-      ),
+      teamMembers: prev.teamMembers.map(m => {
+        if (m.id !== memberId) return m;
+        const updated = { ...m, [field]: value };
+        // Auto-update initials when name changes
+        if (field === 'name' && typeof value === 'string') {
+          updated.initials = getInitials(value);
+        }
+        return updated;
+      }),
     }));
   }, []);
 
@@ -591,6 +699,46 @@ export function useProjectStore() {
     }));
   }, []);
 
+  // History entries
+  const addHistoryEntry = useCallback(() => {
+    setData(prev => ({
+      ...prev,
+      historyEntries: [
+        {
+          id: `he-${Date.now()}`,
+          title: `Nueva Versión — ${new Date().toISOString().split('T')[0]}`,
+          author: '',
+          items: ['✨ Nuevo cambio'],
+        },
+        ...prev.historyEntries,
+      ],
+    }));
+  }, []);
+
+  const updateHistoryEntry = useCallback((entryId: string, field: keyof HistoryEntry, value: string | string[]) => {
+    setData(prev => ({
+      ...prev,
+      historyEntries: prev.historyEntries.map(e =>
+        e.id === entryId ? { ...e, [field]: value } : e
+      ),
+    }));
+  }, []);
+
+  const removeHistoryEntry = useCallback((entryId: string) => {
+    setData(prev => ({
+      ...prev,
+      historyEntries: prev.historyEntries.filter(e => e.id !== entryId),
+    }));
+  }, []);
+
+  // Banner
+  const updateBanner = useCallback((field: keyof BannerConfig, value: string) => {
+    setData(prev => ({
+      ...prev,
+      banner: { ...prev.banner, [field]: value },
+    }));
+  }, []);
+
   const getOverallProgress = useCallback(() => {
     const stageLists = ['etapa-diseno', 'etapa-simulacion', 'etapa-implementacion', 'etapa-pruebas'];
     let total = 0;
@@ -623,6 +771,7 @@ export function useProjectStore() {
     toggleCheckItem,
     addCheckItem,
     removeCheckItem,
+    updateCheckItemText,
     updateTableCell,
     addTableRow,
     removeTableRow,
@@ -639,6 +788,10 @@ export function useProjectStore() {
     updateTimelineStep,
     addTimelineStep,
     removeTimelineStep,
+    addHistoryEntry,
+    updateHistoryEntry,
+    removeHistoryEntry,
+    updateBanner,
     getOverallProgress,
     getChecklistProgress,
     resetData,

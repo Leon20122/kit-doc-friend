@@ -139,13 +139,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             {data.teamMembers.map(m => (
               <div key={m.id} className="flex items-center gap-3 group">
                 <div className={`w-8 h-8 rounded-full ${m.color} flex items-center justify-center text-xs font-bold text-foreground flex-shrink-0`}>
-                  {editingMember === m.id ? (
-                    <input
-                      value={m.initials}
-                      onChange={e => updateTeamMember(m.id, 'initials', e.target.value.slice(0, 2).toUpperCase())}
-                      className="w-6 text-center bg-transparent border-none outline-none text-xs font-bold"
-                    />
-                  ) : m.initials}
+                  {m.initials}
                 </div>
                 <div className="flex-1 min-w-0">
                   {editingMember === m.id ? (
