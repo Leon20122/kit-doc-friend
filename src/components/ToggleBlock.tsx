@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { ChevronRight } from 'lucide-react';
 
 interface ToggleBlockProps {
-  title: string;
+  title: string | ReactNode;
   defaultOpen?: boolean;
   badge?: ReactNode;
   children: ReactNode;
