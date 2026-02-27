@@ -1,5 +1,5 @@
 import { ToggleBlock } from '@/components/ToggleBlock';
-import { Callout } from '@/components/Callout';
+import { ImageGallery } from '@/components/ImageGallery';
 
 export function Simulaciones() {
   return (
@@ -60,6 +60,8 @@ export function Simulaciones() {
             </tbody>
           </table>
         </div>
+        <h4 className="text-sm font-semibold text-foreground mb-2 mt-4">📷 Gráficas del Análisis DC</h4>
+        <ImageGallery galleryId="sim-dc" columns={2} placeholder="Añadir gráfica DC" />
       </ToggleBlock>
 
       <ToggleBlock title="Análisis AC - Respuesta en Frecuencia (.AC)">
@@ -90,15 +92,15 @@ export function Simulaciones() {
             </tbody>
           </table>
         </div>
+        <h4 className="text-sm font-semibold text-foreground mb-2 mt-4">📈 Gráfica de Respuesta en Frecuencia (AC)</h4>
+        <ImageGallery galleryId="sim-ac" columns={1} placeholder="Añadir gráfica AC" />
       </ToggleBlock>
 
       <ToggleBlock title="Análisis Transitorio (.TRAN)">
         <h4 className="text-sm font-semibold text-foreground mb-2">Medición de Slew Rate</h4>
         <div className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary mb-3">SR = ΔV / Δt = [valor medido] V/μs</div>
-        <div className="bg-card rounded-xl border-2 border-dashed border-border p-6 text-center">
-          <div className="text-2xl mb-1">📉</div>
-          <p className="text-sm text-muted-foreground">[Insertar formas de onda transitorias aquí]</p>
-        </div>
+        <h4 className="text-sm font-semibold text-foreground mb-2">📉 Formas de Onda Transitorias</h4>
+        <ImageGallery galleryId="sim-tran" columns={2} placeholder="Añadir gráfica transitoria" />
       </ToggleBlock>
 
       <div className="w-full h-px bg-border my-6" />
@@ -106,13 +108,13 @@ export function Simulaciones() {
       <h2 className="text-lg font-semibold text-foreground mb-3">🔬 Simulación de Aplicaciones</h2>
       
       {[
-        { title: 'Buffer (Seguidor de Voltaje, Av = 1)', rows: [['Ganancia', '1.000', '0.998'], ['Impedancia de salida', 'Baja', '~50 Ω'], ['Distorsión', 'Mínima', '< 0.1%']] },
-        { title: 'Amplificador Inversor (Av = -10)', eq: 'Av = -Rf/Ri = -100k/10k = -10', rows: [['Ganancia', '-10.00', '-9.97'], ['BW (-3dB)', '~100 kHz', '95 kHz'], ['Fase a 1kHz', '180°', '179.8°']] },
-        { title: 'Amplificador No Inversor (Av = +10)', eq: 'Av = 1 + Rf/Ri = 1 + 90k/10k = +10', rows: [['Ganancia', '+10.00', '+9.98'], ['BW (-3dB)', '~100 kHz', '98 kHz'], ['Fase a 1kHz', '0°', '-0.2°']] },
+        { title: 'Buffer (Seguidor de Voltaje, Av = 1)', galleryId: 'sim-buffer', rows: [['Ganancia', '1.000', '0.998'], ['Impedancia de salida', 'Baja', '~50 Ω'], ['Distorsión', 'Mínima', '< 0.1%']] },
+        { title: 'Amplificador Inversor (Av = -10)', galleryId: 'sim-inversor', eq: 'Av = -Rf/Ri = -100k/10k = -10', rows: [['Ganancia', '-10.00', '-9.97'], ['BW (-3dB)', '~100 kHz', '95 kHz'], ['Fase a 1kHz', '180°', '179.8°']] },
+        { title: 'Amplificador No Inversor (Av = +10)', galleryId: 'sim-noinversor', eq: 'Av = 1 + Rf/Ri = 1 + 90k/10k = +10', rows: [['Ganancia', '+10.00', '+9.98'], ['BW (-3dB)', '~100 kHz', '98 kHz'], ['Fase a 1kHz', '0°', '-0.2°']] },
       ].map((app, idx) => (
         <ToggleBlock key={idx} title={app.title}>
           {app.eq && <div className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary mb-3">{app.eq}</div>}
-          <div className="overflow-x-auto rounded-lg border border-border">
+          <div className="overflow-x-auto rounded-lg border border-border mb-3">
             <table className="w-full text-sm">
               <thead><tr className="bg-secondary/50">
                 <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Parámetro</th>
@@ -132,6 +134,8 @@ export function Simulaciones() {
               </tbody>
             </table>
           </div>
+          <h4 className="text-sm font-semibold text-foreground mb-2">📷 Capturas de Simulación</h4>
+          <ImageGallery galleryId={app.galleryId} columns={2} placeholder="Añadir captura" />
         </ToggleBlock>
       ))}
     </div>

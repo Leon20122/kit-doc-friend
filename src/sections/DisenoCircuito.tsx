@@ -1,5 +1,6 @@
 import { ToggleBlock } from '@/components/ToggleBlock';
 import { Callout } from '@/components/Callout';
+import { ImageGallery } from '@/components/ImageGallery';
 
 export function DisenoCircuito() {
   return (
@@ -12,7 +13,7 @@ export function DisenoCircuito() {
       <h2 className="text-lg font-semibold text-foreground mb-3">🏗️ Topología Seleccionada</h2>
       <Callout type="info" icon="⚡">
         <strong>Arquitectura de 3 etapas con compensación Miller</strong><br/>
-        Se seleccionó esta topología por su balance entre complejidad y rendimiento. Permite alcanzar ganancia suficiente con estabilidad adecuada usando un número reducido de transistores.
+        Se seleccionó esta topología por su balance entre complejidad y rendimiento.
       </Callout>
 
       <div className="flex flex-wrap items-center justify-center gap-3 mb-6 p-4 bg-card rounded-xl border border-border">
@@ -96,22 +97,11 @@ export function DisenoCircuito() {
       <div className="w-full h-px bg-border my-6" />
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📷 Esquemático Completo</h2>
-      <div className="bg-card rounded-xl border-2 border-dashed border-border p-8 text-center mb-4">
-        <div className="text-3xl mb-2">📐</div>
-        <p className="text-sm text-muted-foreground">[Insertar captura del esquemático completo aquí]</p>
-        <p className="text-xs text-muted-foreground mt-1">Archivo fuente: circuito_opamp_v2.1.asc</p>
-      </div>
+      <ImageGallery galleryId="diseno-esquematico" columns={1} placeholder="Añadir esquemático completo" />
 
-      <h3 className="text-sm font-semibold text-foreground mb-2">Esquemáticos por Etapa</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-card rounded-xl border-2 border-dashed border-border p-6 text-center">
-          <div className="text-2xl mb-1">🔀</div>
-          <p className="text-sm text-muted-foreground">[Etapa Diferencial]</p>
-        </div>
-        <div className="bg-card rounded-xl border-2 border-dashed border-border p-6 text-center">
-          <div className="text-2xl mb-1">📈</div>
-          <p className="text-sm text-muted-foreground">[Etapa de Ganancia + Salida]</p>
-        </div>
+      <div className="mt-6">
+        <h3 className="text-sm font-semibold text-foreground mb-2">Esquemáticos por Etapa</h3>
+        <ImageGallery galleryId="diseno-etapas" columns={2} placeholder="Añadir esquemático de etapa" />
       </div>
     </div>
   );
