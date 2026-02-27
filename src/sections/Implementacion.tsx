@@ -1,5 +1,6 @@
 import { Checklist } from '@/components/Checklist';
 import { ToggleBlock } from '@/components/ToggleBlock';
+import { ImageGallery } from '@/components/ImageGallery';
 import { useProject } from '@/contexts/ProjectContext';
 
 export function Implementacion() {
@@ -42,14 +43,7 @@ export function Implementacion() {
       <div className="w-full h-px bg-border my-6" />
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📷 Fotografías del Montaje</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {['📸 Vista general del protoboard', '🔍 Detalle de etapa diferencial', '🔌 Conexiones de alimentación', '⚡ Circuito completo en funcionamiento'].map((ph, i) => (
-          <div key={i} className="bg-card rounded-xl border-2 border-dashed border-border p-6 text-center">
-            <div className="text-2xl mb-1">{ph.split(' ')[0]}</div>
-            <p className="text-sm text-muted-foreground">[{ph.substring(2)}]</p>
-          </div>
-        ))}
-      </div>
+      <ImageGallery galleryId="impl-fotos" columns={2} placeholder="Añadir fotografía del montaje" />
 
       <div className="w-full h-px bg-border my-6" />
 

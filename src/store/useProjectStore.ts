@@ -38,12 +38,30 @@ export interface PhaseProgress {
   status: string;
 }
 
+export interface TeamMember {
+  id: string;
+  initials: string;
+  name: string;
+  role: string;
+  color: string;
+  isLeader?: boolean;
+}
+
+export interface TimelineStep {
+  id: string;
+  label: string;
+  status: 'completed' | 'in-progress' | 'pending';
+}
+
 export interface ProjectData {
   checklists: Record<string, ChecklistGroup>;
   tables: Record<string, EditableTable>;
   activities: ActivityItem[];
   phases: PhaseProgress[];
   notes: Record<string, string>;
+  images: Record<string, string[]>;
+  teamMembers: TeamMember[];
+  timeline: TimelineStep[];
 }
 
 const defaultData: ProjectData = {
@@ -309,6 +327,21 @@ const defaultData: ProjectData = {
     { id: 'ph4', name: 'Pruebas', emoji: '🔴', percent: 0, status: 'Pendiente' },
   ],
   notes: {},
+  images: {},
+  teamMembers: [
+    { id: 'tm1', initials: 'AG', name: 'Alejandro G.', role: 'Diseño y Coordinación', color: 'bg-info', isLeader: true },
+    { id: 'tm2', initials: 'ML', name: 'María L.', role: 'Simulación y Análisis', color: 'bg-warning' },
+    { id: 'tm3', initials: 'CR', name: 'Carlos R.', role: 'Implementación PCB', color: 'bg-success' },
+  ],
+  timeline: [
+    { id: 'tl1', label: 'Inicio', status: 'completed' },
+    { id: 'tl2', label: 'Investigación', status: 'completed' },
+    { id: 'tl3', label: 'Diseño', status: 'completed' },
+    { id: 'tl4', label: 'Simulación', status: 'completed' },
+    { id: 'tl5', label: 'Implementación', status: 'in-progress' },
+    { id: 'tl6', label: 'Pruebas y Mediciones', status: 'pending' },
+    { id: 'tl7', label: 'Entrega Final', status: 'pending' },
+  ],
 };
 
 const STORAGE_KEY = 'opamp-project-data';
@@ -316,7 +349,17 @@ const STORAGE_KEY = 'opamp-project-data';
 function loadData(): ProjectData {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // Merge with defaults for new fields
+      return {
+        ...defaultData,
+        ...parsed,
+        images: parsed.images || {},
+        teamMembers: parsed.teamMembers || defaultData.teamMembers,
+        timeline: parsed.timeline || defaultData.timeline,
+      };
+    }
   } catch {}
   return defaultData;
 }
@@ -355,11 +398,7 @@ export function useProjectStore() {
     setData(prev => {
       const group = prev.checklists[groupId];
       if (!group) return prev;
-      const newItem: ChecklistItem = {
-        id: `${groupId}-${Date.now()}`,
-        text,
-        checked: false,
-      };
+      const newItem: ChecklistItem = { id: `${groupId}-${Date.now()}`, text, checked: false };
       return {
         ...prev,
         checklists: {
@@ -409,10 +448,7 @@ export function useProjectStore() {
     setData(prev => {
       const table = prev.tables[tableId];
       if (!table) return prev;
-      const newRow: TableRow = {
-        id: `${tableId}-${Date.now()}`,
-        cells: table.headers.map(() => ''),
-      };
+      const newRow: TableRow = { id: `${tableId}-${Date.now()}`, cells: table.headers.map(() => '') };
       return {
         ...prev,
         tables: {
@@ -438,24 +474,32 @@ export function useProjectStore() {
   }, []);
 
   const updateNote = useCallback((noteId: string, value: string) => {
-    setData(prev => ({
-      ...prev,
-      notes: { ...prev.notes, [noteId]: value },
-    }));
+    setData(prev => ({ ...prev, notes: { ...prev.notes, [noteId]: value } }));
   }, []);
 
   const addActivity = useCallback((text: string, color: ActivityItem['color'] = 'green') => {
     setData(prev => ({
       ...prev,
       activities: [
-        {
-          id: `act-${Date.now()}`,
-          time: new Date().toLocaleString('es'),
-          text,
-          color,
-        },
+        { id: `act-${Date.now()}`, time: new Date().toLocaleString('es'), text, color },
         ...prev.activities,
       ].slice(0, 20),
+    }));
+  }, []);
+
+  const updateActivity = useCallback((actId: string, field: 'time' | 'text' | 'color', value: string) => {
+    setData(prev => ({
+      ...prev,
+      activities: prev.activities.map(a =>
+        a.id === actId ? { ...a, [field]: value } : a
+      ),
+    }));
+  }, []);
+
+  const removeActivity = useCallback((actId: string) => {
+    setData(prev => ({
+      ...prev,
+      activities: prev.activities.filter(a => a.id !== actId),
     }));
   }, []);
 
@@ -475,7 +519,78 @@ export function useProjectStore() {
     }));
   }, []);
 
-  // Calculate overall progress from checklists
+  // Image gallery methods
+  const addImage = useCallback((galleryId: string, base64: string) => {
+    setData(prev => ({
+      ...prev,
+      images: {
+        ...prev.images,
+        [galleryId]: [...(prev.images[galleryId] || []), base64],
+      },
+    }));
+  }, []);
+
+  const removeImage = useCallback((galleryId: string, index: number) => {
+    setData(prev => ({
+      ...prev,
+      images: {
+        ...prev.images,
+        [galleryId]: (prev.images[galleryId] || []).filter((_, i) => i !== index),
+      },
+    }));
+  }, []);
+
+  // Team members
+  const updateTeamMember = useCallback((memberId: string, field: keyof TeamMember, value: string | boolean) => {
+    setData(prev => ({
+      ...prev,
+      teamMembers: prev.teamMembers.map(m =>
+        m.id === memberId ? { ...m, [field]: value } : m
+      ),
+    }));
+  }, []);
+
+  const addTeamMember = useCallback(() => {
+    setData(prev => ({
+      ...prev,
+      teamMembers: [
+        ...prev.teamMembers,
+        { id: `tm-${Date.now()}`, initials: 'NN', name: 'Nuevo Miembro', role: 'Rol', color: 'bg-info' },
+      ],
+    }));
+  }, []);
+
+  const removeTeamMember = useCallback((memberId: string) => {
+    setData(prev => ({
+      ...prev,
+      teamMembers: prev.teamMembers.filter(m => m.id !== memberId),
+    }));
+  }, []);
+
+  // Timeline
+  const updateTimelineStep = useCallback((stepId: string, field: keyof TimelineStep, value: string) => {
+    setData(prev => ({
+      ...prev,
+      timeline: prev.timeline.map(s =>
+        s.id === stepId ? { ...s, [field]: value } : s
+      ),
+    }));
+  }, []);
+
+  const addTimelineStep = useCallback(() => {
+    setData(prev => ({
+      ...prev,
+      timeline: [...prev.timeline, { id: `tl-${Date.now()}`, label: 'Nueva Etapa', status: 'pending' as const }],
+    }));
+  }, []);
+
+  const removeTimelineStep = useCallback((stepId: string) => {
+    setData(prev => ({
+      ...prev,
+      timeline: prev.timeline.filter(s => s.id !== stepId),
+    }));
+  }, []);
+
   const getOverallProgress = useCallback(() => {
     const stageLists = ['etapa-diseno', 'etapa-simulacion', 'etapa-implementacion', 'etapa-pruebas'];
     let total = 0;
@@ -513,7 +628,17 @@ export function useProjectStore() {
     removeTableRow,
     updateNote,
     addActivity,
+    updateActivity,
+    removeActivity,
     updatePhase,
+    addImage,
+    removeImage,
+    updateTeamMember,
+    addTeamMember,
+    removeTeamMember,
+    updateTimelineStep,
+    addTimelineStep,
+    removeTimelineStep,
     getOverallProgress,
     getChecklistProgress,
     resetData,

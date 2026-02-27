@@ -1,4 +1,5 @@
 import { EditableTable } from '@/components/EditableTable';
+import { ImageGallery } from '@/components/ImageGallery';
 
 export function Mediciones() {
   return (
@@ -30,14 +31,7 @@ export function Mediciones() {
       <div className="w-full h-px bg-border my-6" />
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📸 Capturas del Osciloscopio</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {['Señal de entrada vs salida — Buffer', 'Señal de entrada vs salida — Inversor', 'Medición de Slew Rate', 'Respuesta en frecuencia experimental'].map((ph, i) => (
-          <div key={i} className="bg-card rounded-xl border-2 border-dashed border-border p-6 text-center">
-            <div className="text-2xl mb-1">📊</div>
-            <p className="text-sm text-muted-foreground">[{ph}]</p>
-          </div>
-        ))}
-      </div>
+      <ImageGallery galleryId="mediciones-fotos" columns={2} placeholder="Añadir captura del osciloscopio" />
     </div>
   );
 }
