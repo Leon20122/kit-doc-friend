@@ -1,5 +1,6 @@
 import { ToggleBlock } from '@/components/ToggleBlock';
 import { ImageGallery } from '@/components/ImageGallery';
+import { MultiImageGallery } from '@/components/MultiImageGallery';
 
 export function Simulaciones() {
   return (
@@ -61,7 +62,7 @@ export function Simulaciones() {
           </table>
         </div>
         <h4 className="text-sm font-semibold text-foreground mb-2 mt-4">📷 Gráficas del Análisis DC</h4>
-        <ImageGallery galleryId="sim-dc" columns={2} placeholder="Añadir gráfica DC" />
+        <MultiImageGallery sectionId="sim-dc" columns={2} placeholder="Añadir gráfica DC" defaultLabel="Gráficas DC" />
       </ToggleBlock>
 
       <ToggleBlock title="Análisis AC - Respuesta en Frecuencia (.AC)">
@@ -92,15 +93,15 @@ export function Simulaciones() {
             </tbody>
           </table>
         </div>
-        <h4 className="text-sm font-semibold text-foreground mb-2 mt-4">📈 Gráfica de Respuesta en Frecuencia (AC)</h4>
-        <ImageGallery galleryId="sim-ac" columns={1} placeholder="Añadir gráfica AC" />
+        <h4 className="text-sm font-semibold text-foreground mb-2 mt-4">📈 Gráficas de Respuesta en Frecuencia (AC)</h4>
+        <MultiImageGallery sectionId="sim-ac" columns={1} placeholder="Añadir gráfica AC" defaultLabel="Gráficas AC" />
       </ToggleBlock>
 
       <ToggleBlock title="Análisis Transitorio (.TRAN)">
         <h4 className="text-sm font-semibold text-foreground mb-2">Medición de Slew Rate</h4>
         <div className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary mb-3">SR = ΔV / Δt = [valor medido] V/μs</div>
         <h4 className="text-sm font-semibold text-foreground mb-2">📉 Formas de Onda Transitorias</h4>
-        <ImageGallery galleryId="sim-tran" columns={2} placeholder="Añadir gráfica transitoria" />
+        <MultiImageGallery sectionId="sim-tran" columns={2} placeholder="Añadir gráfica transitoria" defaultLabel="Gráficas Transitorias" />
       </ToggleBlock>
 
       <div className="w-full h-px bg-border my-6" />
@@ -135,7 +136,7 @@ export function Simulaciones() {
             </table>
           </div>
           <h4 className="text-sm font-semibold text-foreground mb-2">📷 Capturas de Simulación</h4>
-          <ImageGallery galleryId={app.galleryId} columns={2} placeholder="Añadir captura" />
+          <MultiImageGallery sectionId={app.galleryId} columns={2} placeholder="Añadir captura" defaultLabel="Capturas" />
         </ToggleBlock>
       ))}
     </div>

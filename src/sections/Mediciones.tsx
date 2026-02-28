@@ -1,5 +1,5 @@
 import { EditableTable } from '@/components/EditableTable';
-import { ImageGallery } from '@/components/ImageGallery';
+import { MultiImageGallery } from '@/components/MultiImageGallery';
 
 export function Mediciones() {
   return (
@@ -31,7 +31,7 @@ export function Mediciones() {
       <div className="w-full h-px bg-border my-6" />
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📸 Capturas del Osciloscopio</h2>
-      <ImageGallery galleryId="mediciones-fotos" columns={2} placeholder="Añadir captura del osciloscopio" />
+      <MultiImageGallery sectionId="mediciones-fotos" columns={2} placeholder="Añadir captura del osciloscopio" defaultLabel="Capturas del osciloscopio" />
     </div>
   );
 }

@@ -11,6 +11,14 @@ interface DashboardProps {
   onNavigate: (id: SectionId) => void;
 }
 
+// Map phase IDs to their corresponding checklist group IDs
+const phaseChecklistMap: Record<string, string> = {
+  'ph1': 'etapa-diseno',
+  'ph2': 'etapa-simulacion',
+  'ph3': 'etapa-implementacion',
+  'ph4': 'etapa-pruebas',
+};
+
 export function Dashboard({ onNavigate }: DashboardProps) {
   const {
     data, getOverallProgress, getChecklistProgress,
@@ -20,8 +28,20 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   } = useProject();
   const progress = getOverallProgress();
 
-  const [editingPhase, setEditingPhase] = useState<string | null>(null);
-  const [phaseInput, setPhaseInput] = useState('');
+  // Auto-compute phase percentages from checklists
+  const computedPhases = data.phases.map(phase => {
+    const checklistId = phaseChecklistMap[phase.id];
+    if (!checklistId) return phase;
+    const { checked, total } = getChecklistProgress(checklistId);
+    const percent = total > 0 ? Math.round((checked / total) * 100) : 0;
+    return {
+      ...phase,
+      percent,
+      status: percent === 100 ? 'Completado' : percent > 0 ? 'En Progreso' : 'Pendiente',
+      emoji: percent === 100 ? '🟢' : percent > 0 ? '🟡' : '🔴',
+    };
+  });
+
   const [editingMember, setEditingMember] = useState<string | null>(null);
   const [newActivityText, setNewActivityText] = useState('');
 
@@ -49,7 +69,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           <div className="flex flex-col sm:flex-row items-center gap-5">
             <ProgressRing percent={progress} />
             <div>
-              <h3 className="font-semibold text-foreground mb-1">Progreso del Proyecto</h3>
+              <h3 className="font-semibold text-white mb-1">Progreso del Proyecto</h3>
               <p className="text-sm text-muted-foreground mb-2">
                 Basado en checklists de las 4 etapas.
               </p>
@@ -61,7 +81,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </div>
 
         <div className="bg-card rounded-xl border border-border p-5">
-          <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">☰ Quick Links</h3>
+          <h3 className="font-semibold text-white mb-3 flex items-center gap-2">☰ Quick Links</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {quickLinks.map((link, i) => (
               <button
@@ -81,7 +101,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         {/* Recent Activity - Editable */}
         <div className="bg-card rounded-xl border border-border p-5">
-          <h3 className="font-semibold text-foreground mb-3">Recent Activity</h3>
+          <h3 className="font-semibold text-white mb-3">Recent Activity</h3>
           <ul className="space-y-3 mb-3">
             {data.activities.slice(0, 5).map(act => (
               <li key={act.id} className="flex items-start gap-3 group">
@@ -134,7 +154,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
         {/* Team Collaboration - Editable */}
         <div className="bg-card rounded-xl border border-border p-5">
-          <h3 className="font-semibold text-foreground mb-3">Team Collaboration</h3>
+          <h3 className="font-semibold text-white mb-3">Team Collaboration</h3>
           <div className="space-y-2 mb-4">
             {data.teamMembers.map(m => (
               <div key={m.id} className="flex items-center gap-3 group">
@@ -231,9 +251,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
       {/* Phase Progress Cards - Editable */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-        {data.phases.map(phase => (
+        {computedPhases.map(phase => (
           <div key={phase.id} className="bg-card rounded-xl border border-border p-4">
-            <div className="text-sm font-medium text-foreground mb-2">{phase.emoji} {phase.name}</div>
+            <div className="text-sm font-medium text-white mb-2">{phase.emoji} {phase.name}</div>
             <div className="w-full h-2 bg-secondary rounded-full overflow-hidden mb-1">
               <div
                 className="h-full rounded-full transition-all duration-500"
@@ -248,35 +268,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               />
             </div>
             <div className="flex justify-between items-center text-xs">
-              {editingPhase === phase.id ? (
-                <div className="flex items-center gap-1">
-                  <input
-                    type="number"
-                    min="0" max="100"
-                    value={phaseInput}
-                    onChange={e => setPhaseInput(e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') {
-                        updatePhase(phase.id, Math.min(100, Math.max(0, parseInt(phaseInput) || 0)));
-                        setEditingPhase(null);
-                      }
-                    }}
-                    className="w-12 bg-secondary border border-border rounded px-1 py-0.5 text-xs text-foreground outline-none"
-                    autoFocus
-                  />
-                  <span className="text-muted-foreground">%</span>
-                  <button onClick={() => { updatePhase(phase.id, Math.min(100, Math.max(0, parseInt(phaseInput) || 0))); setEditingPhase(null); }}>
-                    <Check size={12} className="text-success" />
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => { setEditingPhase(phase.id); setPhaseInput(String(phase.percent)); }}
-                  className="text-muted-foreground hover:text-foreground cursor-pointer"
-                >
-                  {phase.percent}%
-                </button>
-              )}
+              <span className="text-white">{phase.percent}%</span>
               <span className={
                 phase.percent === 100 ? 'text-success' :
                 phase.percent > 0 ? 'text-primary' : 'text-muted-foreground'
@@ -298,7 +290,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
       {/* Checklists */}
       <div className="bg-card rounded-xl border border-border p-5">
-        <h3 className="font-semibold text-foreground mb-4">✅ Checklists de Verificación por Etapa</h3>
+        <h3 className="font-semibold text-white mb-4">✅ Checklists de Verificación por Etapa</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-2">
             <ToggleBlock title="ETAPA 1: DISEÑO"
