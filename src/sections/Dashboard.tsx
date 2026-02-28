@@ -51,6 +51,13 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     { emoji: '💻', label: 'Resultados de\nSimulación', section: 'simulaciones' as SectionId },
     { emoji: '📦', label: 'Lista de\nMateriales', section: 'especificaciones' as SectionId },
     { emoji: '📅', label: 'Control de\nCambios', section: 'control-cambios' as SectionId },
+    { emoji: '🎯', label: 'Objetivos\ndel Proyecto', section: 'objetivos' as SectionId },
+    { emoji: '📐', label: 'Marco\nTeórico', section: 'marco-teorico' as SectionId },
+    { emoji: '🔧', label: 'Implementación\ny Montaje', section: 'implementacion' as SectionId },
+    { emoji: '📏', label: 'Mediciones\ny Pruebas', section: 'mediciones' as SectionId },
+    { emoji: '🔍', label: 'Problemas\ny Soluciones', section: 'problemas-soluciones' as SectionId },
+    { emoji: '📚', label: 'Referencias\ny Bibliografía', section: 'referencias' as SectionId },
+    { emoji: '✅', label: 'Conclusiones\nFinales', section: 'conclusiones' as SectionId },
   ];
 
   const activityColors = { red: 'bg-destructive', yellow: 'bg-warning', blue: 'bg-info', green: 'bg-success' };
@@ -82,7 +89,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
         <div className="bg-card rounded-xl border border-border p-5">
           <h3 className="font-semibold text-white mb-3 flex items-center gap-2">☰ Quick Links</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
             {quickLinks.map((link, i) => (
               <button
                 key={i}

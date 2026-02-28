@@ -1,6 +1,7 @@
 import { ToggleBlock } from '@/components/ToggleBlock';
 import { Callout } from '@/components/Callout';
 import { ImageGallery } from '@/components/ImageGallery';
+import { MultiImageGallery } from '@/components/MultiImageGallery';
 
 export function DisenoCircuito() {
   return (
@@ -101,7 +102,7 @@ export function DisenoCircuito() {
 
       <div className="mt-6">
         <h3 className="text-sm font-semibold text-foreground mb-2">Esquemáticos por Etapa</h3>
-        <ImageGallery galleryId="diseno-etapas" columns={2} placeholder="Añadir esquemático de etapa" />
+        <MultiImageGallery sectionId="diseno-etapas" columns={2} placeholder="Añadir esquemático de etapa" defaultLabel="Esquemático de etapa" />
       </div>
     </div>
   );
