@@ -82,31 +82,31 @@ export function HeaderBanner() {
         <input
           value={banner.title}
           onChange={e => updateBanner('title', e.target.value)}
-          className="text-2xl md:text-3xl font-bold text-primary-foreground mb-1 bg-transparent border-none outline-none text-center w-full"
+          className="text-2xl md:text-3xl font-bold text-white mb-1 bg-transparent border-none outline-none text-center w-full"
         />
         <input
           value={banner.subtitle}
           onChange={e => updateBanner('subtitle', e.target.value)}
-          className="text-primary-foreground/80 text-sm mb-4 bg-transparent border-none outline-none text-center w-full"
+          className="text-white/80 text-sm mb-4 bg-transparent border-none outline-none text-center w-full"
         />
         <div className="flex flex-wrap justify-center gap-2">
-          <span className="bg-primary-foreground/20 text-primary-foreground text-xs px-3 py-1 rounded-full backdrop-blur-sm flex items-center gap-1">
+          <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm flex items-center gap-1">
             📋
             <input
               value={banner.version}
               onChange={e => updateBanner('version', e.target.value)}
-              className="bg-transparent border-none outline-none text-primary-foreground w-12 text-xs"
+              className="bg-transparent border-none outline-none text-white w-12 text-xs"
             />
           </span>
-          <span className="bg-primary-foreground/20 text-primary-foreground text-xs px-3 py-1 rounded-full backdrop-blur-sm flex items-center gap-1">
+          <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm flex items-center gap-1">
             🔄
             <input
               value={banner.statusText}
               onChange={e => updateBanner('statusText', e.target.value)}
-              className="bg-transparent border-none outline-none text-primary-foreground w-40 text-xs"
+              className="bg-transparent border-none outline-none text-white w-40 text-xs"
             />
           </span>
-          <span className="bg-primary-foreground/20 text-primary-foreground text-xs px-3 py-1 rounded-full backdrop-blur-sm">
+          <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm">
             👥 {teamMembers.length} Integrantes
           </span>
         </div>
