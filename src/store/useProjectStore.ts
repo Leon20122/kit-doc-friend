@@ -341,6 +341,69 @@ const defaultData: ProjectData = {
         { id: 'v5', cells: ['v1.0', '2023-10-15', 'Equipo', 'Creación inicial del documento y estructura completa', 'Inicial'] },
       ],
     },
+    'ref-datasheets': {
+      id: 'ref-datasheets',
+      headers: ['Componente', 'Fabricante', 'Link'],
+      rows: [
+        { id: 'rd1', cells: ['2N2222 (NPN)', 'ON Semiconductor', '📎 Datasheet'] },
+        { id: 'rd2', cells: ['2N2907 (PNP)', 'ON Semiconductor', '📎 Datasheet'] },
+        { id: 'rd3', cells: ['LM741 (Referencia)', 'Texas Instruments', '📎 Datasheet'] },
+      ],
+    },
+    'ref-recursos': {
+      id: 'ref-recursos',
+      headers: ['Recurso', 'Descripción'],
+      rows: [
+        { id: 'rr1', cells: ['LTSpice Community', 'Foro y tutoriales de simulación'] },
+        { id: 'rr2', cells: ['All About Circuits', 'Tutoriales de electrónica'] },
+        { id: 'rr3', cells: ['Electronics Tutorials', 'Teoría de op-amps y BJTs'] },
+        { id: 'rr4', cells: ['MIT OCW 6.002', 'Curso de circuitos electrónicos'] },
+      ],
+    },
+    'ref-appnotes': {
+      id: 'ref-appnotes',
+      headers: ['Código', 'Título', 'Fabricante'],
+      rows: [
+        { id: 'ra1', cells: ['AN-31', 'Op Amp Circuit Collection', 'Texas Instruments'] },
+        { id: 'ra2', cells: ['AN-20', 'An Applications Guide for Op Amps', 'Texas Instruments'] },
+        { id: 'ra3', cells: ['AN-4', 'Monolithic Op Amp — The Universal Linear Component', 'Texas Instruments'] },
+        { id: 'ra4', cells: ['AND9093', 'Understanding BJT Parameters', 'ON Semiconductor'] },
+      ],
+    },
+    'conclusiones-objetivos': {
+      id: 'conclusiones-objetivos',
+      headers: ['Objetivo', 'Estado'],
+      rows: [
+        { id: 'co1', cells: ['Comprender arquitectura interna de op-amp', '✅ Completado'] },
+        { id: 'co2', cells: ['Diseñar cada etapa del circuito', '✅ Completado'] },
+        { id: 'co3', cells: ['Simular comportamiento en SPICE', '✅ Completado'] },
+        { id: 'co4', cells: ['Construir prototipo en protoboard', '🔄 En Progreso'] },
+        { id: 'co5', cells: ['Caracterizar con mediciones', '⏳ Pendiente'] },
+        { id: 'co6', cells: ['Documentar con trazabilidad', '✅ Completado'] },
+      ],
+    },
+    'conclusiones-mejoras': {
+      id: 'conclusiones-mejoras',
+      headers: ['Mejora', 'Beneficio', 'Dificultad'],
+      rows: [
+        { id: 'cm1', cells: ['Espejo de corriente Wilson', 'Mayor CMRR y estabilidad de Iee', 'Media'] },
+        { id: 'cm2', cells: ['Darlington en etapa de ganancia', 'Mayor ganancia total', 'Baja'] },
+        { id: 'cm3', cells: ['Protección de salida', 'Limitación de corriente', 'Media'] },
+        { id: 'cm4', cells: ['Diseño PCB', 'Mejor rendimiento y reproducibilidad', 'Alta'] },
+        { id: 'cm5', cells: ['Ajuste de offset', 'Reducir voltaje de offset a la salida', 'Baja'] },
+      ],
+    },
+    'problemas-comunes': {
+      id: 'problemas-comunes',
+      headers: ['Síntoma', 'Posibles Causas', 'Verificación'],
+      rows: [
+        { id: 'pc1', cells: ['Salida saturada', 'Offset de entrada, error de cableado, BJT dañado', 'Medir Vout sin entrada, verificar conexiones'] },
+        { id: 'pc2', cells: ['Oscilaciones', 'Sin compensación, cables largos, falta de desacoplo', 'Agregar Cc, acortar cables, agregar 100nF'] },
+        { id: 'pc3', cells: ['Ganancia baja', 'BJT en saturación, valores incorrectos', 'Verificar punto de operación, medir Vce'] },
+        { id: 'pc4', cells: ['Distorsión alta', 'Saturación de etapa, clase B crossover', 'Reducir amplitud, verificar polarización'] },
+        { id: 'pc5', cells: ['Ruido excesivo', 'Fuente ruidosa, GND loops, acoplamiento', 'Mejorar desacoplo, verificar ruteo GND'] },
+      ],
+    },
   },
   activities: [
     { id: 'a1', time: 'Hoy, 10:30 AM', text: 'Diseño del Circuito actualizado por Alejandro G. (Diagrama esquemático finalizado).', color: 'red' },

@@ -1,6 +1,6 @@
 import { Checklist } from '@/components/Checklist';
 import { ToggleBlock } from '@/components/ToggleBlock';
-import { ImageGallery } from '@/components/ImageGallery';
+import { MultiImageGallery } from '@/components/MultiImageGallery';
 import { useProject } from '@/contexts/ProjectContext';
 
 export function Implementacion() {
@@ -43,7 +43,7 @@ export function Implementacion() {
       <div className="w-full h-px bg-border my-6" />
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📷 Fotografías del Montaje</h2>
-      <ImageGallery galleryId="impl-fotos" columns={2} placeholder="Añadir fotografía del montaje" />
+      <MultiImageGallery sectionId="impl-fotos" columns={2} placeholder="Añadir fotografía del montaje" defaultLabel="Fotografías del montaje" />
 
       <div className="w-full h-px bg-border my-6" />
 

@@ -1,8 +1,45 @@
+import { useState } from 'react';
 import { EditableTable } from '@/components/EditableTable';
+import { EditableNote } from '@/components/EditableNote';
 import { ToggleBlock } from '@/components/ToggleBlock';
 import { Callout } from '@/components/Callout';
+import { useProject } from '@/contexts/ProjectContext';
+import { Plus, X, Pencil, Check } from 'lucide-react';
+
+interface Problem {
+  id: string;
+  title: string;
+  date: string;
+  symptom: string;
+  diagnosis: string;
+  rootCause: string;
+  solution: string;
+  lesson: string;
+}
 
 export function ProblemasSoluciones() {
+  const { data, updateNote } = useProject();
+  const storageKey = 'problems-list';
+  const raw = data.notes[storageKey];
+  
+  const defaultProblems: Problem[] = [
+    { id: 'p1', title: 'Problema #001: Salida Saturada', date: '2023-10-18', symptom: 'La salida del op-amp estaba permanentemente saturada a Vcc+ (~14.3V) sin señal de entrada aplicada.', diagnosis: 'Se midió la tensión en los colectores de Q1 y Q2. Se encontró una diferencia de 1.2V.', rootCause: 'Los transistores Q1 y Q2 tenían β significativamente diferentes (Q1: β=180, Q2: β=240).', solution: 'Se reemplazaron Q1 y Q2 por un par con β más cercano (Q1: β=210, Q2: β=215). El offset se redujo a <5mV.', lesson: 'Siempre emparejar los transistores del par diferencial midiendo β antes del montaje.' },
+    { id: 'p2', title: 'Problema #002: Oscilaciones a Alta Frecuencia', date: '2023-10-20', symptom: 'Se observaban oscilaciones de ~5MHz superpuestas a la señal de salida.', diagnosis: '', rootCause: 'Sin compensación de frecuencia, margen de fase insuficiente.', solution: 'Se agregó capacitor de compensación Miller (Cc = 33pF), logrando margen de fase de 62°.', lesson: '' },
+  ];
+
+  const problems: Problem[] = raw ? JSON.parse(raw) : defaultProblems;
+  const save = (p: Problem[]) => updateNote(storageKey, JSON.stringify(p));
+
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const updateProblem = (id: string, field: keyof Problem, value: string) => {
+    save(problems.map(p => p.id === id ? { ...p, [field]: value } : p));
+  };
+
+  const addProblem = () => {
+    save([...problems, { id: `p-${Date.now()}`, title: `Problema #${String(problems.length + 1).padStart(3, '0')}: Nuevo Problema`, date: new Date().toISOString().split('T')[0], symptom: '', diagnosis: '', rootCause: '', solution: '', lesson: '' }]);
+  };
+
   return (
     <div className="animate-fade-in">
       <div className="mb-6">
@@ -19,56 +56,67 @@ export function ProblemasSoluciones() {
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📝 Detalle de Problemas</h2>
 
-      <ToggleBlock title="Problema #001: Salida Saturada" defaultOpen>
-        <p className="text-sm text-foreground/80 mb-2">📅 <strong>Fecha:</strong> 2023-10-18</p>
-        <Callout type="error" icon="🔴">
-          <strong>Síntoma:</strong> La salida del op-amp estaba permanentemente saturada a Vcc+ (~14.3V) sin señal de entrada aplicada.
-        </Callout>
-        <p className="text-sm text-foreground/80 mb-2">🔍 <strong>Diagnóstico:</strong> Se midió la tensión en los colectores de Q1 y Q2. Se encontró una diferencia de 1.2V.</p>
-        <p className="text-sm text-foreground/80 mb-2">💡 <strong>Causa raíz:</strong> Los transistores Q1 y Q2 tenían β significativamente diferentes (Q1: β=180, Q2: β=240).</p>
-        <Callout type="success" icon="✅">
-          <strong>Solución:</strong> Se reemplazaron Q1 y Q2 por un par con β más cercano (Q1: β=210, Q2: β=215). El offset se redujo a {'<'}5mV.
-        </Callout>
-        <p className="text-sm text-foreground/80">📝 <strong>Lección:</strong> Siempre emparejar los transistores del par diferencial midiendo β antes del montaje.</p>
-      </ToggleBlock>
+      {problems.map((prob) => (
+        <ToggleBlock key={prob.id} title={
+          editingId === prob.id ? (
+            <input value={prob.title} onChange={e => updateProblem(prob.id, 'title', e.target.value)}
+              className="bg-transparent border-b border-border text-foreground outline-none w-full text-sm font-semibold"
+              onClick={e => e.stopPropagation()} />
+          ) : prob.title
+        } defaultOpen={prob.id === 'p1'}
+          badge={
+            <div className="flex items-center gap-1">
+              <button onClick={(e) => { e.stopPropagation(); setEditingId(editingId === prob.id ? null : prob.id); }} className="text-muted-foreground hover:text-foreground">
+                {editingId === prob.id ? <Check size={14} /> : <Pencil size={14} />}
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); save(problems.filter(p => p.id !== prob.id)); }} className="text-destructive"><X size={14} /></button>
+            </div>
+          }
+        >
+          <div className="space-y-2">
+            <p className="text-sm text-foreground/80">📅 <strong>Fecha:</strong>{' '}
+              <input value={prob.date} onChange={e => updateProblem(prob.id, 'date', e.target.value)}
+                className="bg-transparent border-b border-border text-foreground/80 outline-none text-sm w-32" />
+            </p>
+            <Callout type="error" icon="🔴">
+              <strong>Síntoma:</strong>{' '}
+              <input value={prob.symptom} onChange={e => updateProblem(prob.id, 'symptom', e.target.value)}
+                className="bg-transparent border-none text-foreground outline-none text-sm w-full" />
+            </Callout>
+            {(prob.diagnosis || editingId === prob.id) && (
+              <p className="text-sm text-foreground/80">🔍 <strong>Diagnóstico:</strong>{' '}
+                <input value={prob.diagnosis} onChange={e => updateProblem(prob.id, 'diagnosis', e.target.value)}
+                  className="bg-transparent border-b border-border text-foreground/80 outline-none text-sm w-full" />
+              </p>
+            )}
+            <p className="text-sm text-foreground/80">💡 <strong>Causa raíz:</strong>{' '}
+              <input value={prob.rootCause} onChange={e => updateProblem(prob.id, 'rootCause', e.target.value)}
+                className="bg-transparent border-b border-border text-foreground/80 outline-none text-sm w-full" />
+            </p>
+            <Callout type="success" icon="✅">
+              <strong>Solución:</strong>{' '}
+              <input value={prob.solution} onChange={e => updateProblem(prob.id, 'solution', e.target.value)}
+                className="bg-transparent border-none text-foreground outline-none text-sm w-full" />
+            </Callout>
+            {(prob.lesson || editingId === prob.id) && (
+              <p className="text-sm text-foreground/80">📝 <strong>Lección:</strong>{' '}
+                <input value={prob.lesson} onChange={e => updateProblem(prob.id, 'lesson', e.target.value)}
+                  className="bg-transparent border-b border-border text-foreground/80 outline-none text-sm w-full" />
+              </p>
+            )}
+          </div>
+        </ToggleBlock>
+      ))}
 
-      <ToggleBlock title="Problema #002: Oscilaciones a Alta Frecuencia">
-        <p className="text-sm text-foreground/80 mb-2">📅 <strong>Fecha:</strong> 2023-10-20</p>
-        <Callout type="error" icon="🔴">
-          <strong>Síntoma:</strong> Se observaban oscilaciones de ~5MHz superpuestas a la señal de salida.
-        </Callout>
-        <p className="text-sm text-foreground/80 mb-2">💡 <strong>Causa raíz:</strong> Sin compensación de frecuencia, margen de fase insuficiente.</p>
-        <Callout type="success" icon="✅">
-          <strong>Solución:</strong> Se agregó capacitor de compensación Miller (Cc = 33pF), logrando margen de fase de 62°.
-        </Callout>
-      </ToggleBlock>
+      <button onClick={addProblem} className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 mt-3 mb-6">
+        <Plus size={16} /> Añadir nuevo problema
+      </button>
 
       <div className="w-full h-px bg-border my-6" />
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📖 Problemas Comunes en Op-Amps (Referencia)</h2>
-      <div className="overflow-x-auto rounded-lg border border-border">
-        <table className="w-full text-sm">
-          <thead><tr className="bg-secondary/50">
-            <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Síntoma</th>
-            <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Posibles Causas</th>
-            <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Verificación</th>
-          </tr></thead>
-          <tbody className="divide-y divide-border">
-            {[
-              ['Salida saturada', 'Offset de entrada, error de cableado, BJT dañado', 'Medir Vout sin entrada, verificar conexiones'],
-              ['Oscilaciones', 'Sin compensación, cables largos, falta de desacoplo', 'Agregar Cc, acortar cables, agregar 100nF'],
-              ['Ganancia baja', 'BJT en saturación, valores incorrectos', 'Verificar punto de operación, medir Vce'],
-              ['Distorsión alta', 'Saturación de etapa, clase B crossover', 'Reducir amplitud, verificar polarización'],
-              ['Ruido excesivo', 'Fuente ruidosa, GND loops, acoplamiento', 'Mejorar desacoplo, verificar ruteo GND'],
-            ].map(([s, c, v], i) => (
-              <tr key={i} className="hover:bg-secondary/30">
-                <td className="px-3 py-2 text-foreground/90">{s}</td>
-                <td className="px-3 py-2 text-foreground/90">{c}</td>
-                <td className="px-3 py-2 text-foreground/90">{v}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="bg-card rounded-xl border border-border p-5">
+        <EditableTable tableId="problemas-comunes" />
       </div>
     </div>
   );
