@@ -8,15 +8,16 @@ interface MultiImageGalleryProps {
   columns?: number;
   placeholder?: string;
   defaultLabel?: string;
+  showDate?: boolean;
 }
 
-export function MultiImageGallery({ sectionId, columns = 2, placeholder = 'Añadir imagen', defaultLabel = 'Nuevo bloque de fotos' }: MultiImageGalleryProps) {
+export function MultiImageGallery({ sectionId, columns = 2, placeholder = 'Añadir imagen', defaultLabel = 'Nuevo bloque de fotos', showDate = false }: MultiImageGalleryProps) {
   const { data, updateNote } = useProject();
   
   // Store gallery block metadata in notes as JSON
   const storageKey = `gallery-blocks-${sectionId}`;
   const raw = data.notes[storageKey];
-  const blocks: { id: string; label: string }[] = raw ? JSON.parse(raw) : [{ id: `${sectionId}-default`, label: defaultLabel }];
+  const blocks: { id: string; label: string; date?: string }[] = raw ? JSON.parse(raw) : [{ id: `${sectionId}-default`, label: defaultLabel, date: '' }];
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editLabel, setEditLabel] = useState('');
@@ -27,7 +28,7 @@ export function MultiImageGallery({ sectionId, columns = 2, placeholder = 'Añad
 
   const addBlock = () => {
     const newId = `${sectionId}-${Date.now()}`;
-    saveBlocks([...blocks, { id: newId, label: defaultLabel }]);
+    saveBlocks([...blocks, { id: newId, label: defaultLabel, date: '' }]);
   };
 
   const removeBlock = (id: string) => {
@@ -61,7 +62,17 @@ export function MultiImageGallery({ sectionId, columns = 2, placeholder = 'Añad
                 <button onClick={() => confirmEdit(block.id)} className="text-success"><Check size={14} /></button>
               </div>
             ) : (
-              <h4 className="text-sm font-semibold text-foreground">{block.label}</h4>
+              <div className="flex items-center gap-3 flex-1">
+                <h4 className="text-sm font-semibold text-foreground">{block.label}</h4>
+                {showDate && (
+                  <input
+                    type="date"
+                    value={block.date || ''}
+                    onChange={e => saveBlocks(blocks.map(b => b.id === block.id ? { ...b, date: e.target.value } : b))}
+                    className="text-xs bg-secondary/50 border border-border rounded px-2 py-0.5 text-muted-foreground outline-none"
+                  />
+                )}
+              </div>
             )}
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               <button onClick={() => startEdit(block)} className="text-muted-foreground hover:text-foreground p-1"><Pencil size={12} /></button>

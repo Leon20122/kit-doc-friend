@@ -31,7 +31,7 @@ export function Mediciones() {
       <div className="w-full h-px bg-border my-6" />
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📸 Capturas del Osciloscopio</h2>
-      <MultiImageGallery sectionId="mediciones-fotos" columns={2} placeholder="Añadir captura del osciloscopio" defaultLabel="Capturas del osciloscopio" />
+      <MultiImageGallery sectionId="mediciones-fotos" columns={2} placeholder="Añadir captura del osciloscopio" defaultLabel="Capturas del osciloscopio" showDate />
     </div>
   );
 }
