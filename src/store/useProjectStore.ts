@@ -415,6 +415,39 @@ const defaultData: ProjectData = {
         { id: 'cp5', cells: ['Par diferencial', 'Q1/Q2 cercanos para matching térmico', '✓ Sí'] },
       ],
     },
+    'diseno-par-diferencial': {
+      id: 'diseno-par-diferencial',
+      headers: ['Parámetro', 'Valor', 'Cálculo'],
+      rows: [
+        { id: 'dpd1', cells: ['Corriente de cola (Iee)', '1 mA', 'Selección de diseño'] },
+        { id: 'dpd2', cells: ['Ic1 = Ic2', '0.5 mA', 'Iee / 2'] },
+        { id: 'dpd3', cells: ['Transconductancia (gm)', '19.2 mA/V', 'Ic / VT = 0.5mA / 26mV'] },
+        { id: 'dpd4', cells: ['Resistencia colector (Rc)', '10 kΩ', 'Selección de diseño'] },
+        { id: 'dpd5', cells: ['Ganancia diferencial (Ad)', '192 V/V', 'gm × Rc = 19.2 × 10k'] },
+      ],
+    },
+    'diseno-etapa-ganancia': {
+      id: 'diseno-etapa-ganancia',
+      headers: ['Parámetro', 'Valor', 'Notas'],
+      rows: [
+        { id: 'deg1', cells: ['Configuración', 'Emisor Común', 'Con carga resistiva'] },
+        { id: 'deg2', cells: ['Ic (Q5)', '1 mA', 'Punto de operación'] },
+        { id: 'deg3', cells: ['gm (Q5)', '38.5 mA/V', 'Ic/VT'] },
+        { id: 'deg4', cells: ['Rc (Q5)', '10 kΩ', 'Carga de colector'] },
+        { id: 'deg5', cells: ['Av etapa 2', '-385 V/V', '-gm × Rc'] },
+      ],
+    },
+    'diseno-ganancia-total': {
+      id: 'diseno-ganancia-total',
+      headers: ['Parámetro', 'Valor', 'Notas'],
+      rows: [
+        { id: 'dgt1', cells: ['Av etapa 1 (Ad)', '192 V/V', 'Par diferencial'] },
+        { id: 'dgt2', cells: ['Av etapa 2', '385 V/V', 'Emisor común'] },
+        { id: 'dgt3', cells: ['Av etapa 3', '1 V/V', 'Push-Pull (seguidor)'] },
+        { id: 'dgt4', cells: ['Av total', '73,920 V/V', 'Ad × Av2 × Av3'] },
+        { id: 'dgt5', cells: ['Av total (dB)', '≈ 97.4 dB', '20·log(73920)'] },
+      ],
+    },
   },
   activities: [
     { id: 'a1', time: 'Hoy, 10:30 AM', text: 'Diseño del Circuito actualizado por Alejandro G. (Diagrama esquemático finalizado).', color: 'red' },

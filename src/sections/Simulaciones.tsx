@@ -62,7 +62,7 @@ export function Simulaciones() {
           </table>
         </div>
         <h4 className="text-sm font-semibold text-foreground mb-2 mt-4">📷 Gráficas del Análisis DC</h4>
-        <MultiImageGallery sectionId="sim-dc" columns={2} placeholder="Añadir gráfica DC" defaultLabel="Gráficas DC" />
+        <MultiImageGallery sectionId="sim-dc" columns={2} placeholder="Añadir gráfica DC" defaultLabel="Gráficas DC" showDate />
       </ToggleBlock>
 
       <ToggleBlock title="Análisis AC - Respuesta en Frecuencia (.AC)">
@@ -94,14 +94,14 @@ export function Simulaciones() {
           </table>
         </div>
         <h4 className="text-sm font-semibold text-foreground mb-2 mt-4">📈 Gráficas de Respuesta en Frecuencia (AC)</h4>
-        <MultiImageGallery sectionId="sim-ac" columns={1} placeholder="Añadir gráfica AC" defaultLabel="Gráficas AC" />
+        <MultiImageGallery sectionId="sim-ac" columns={1} placeholder="Añadir gráfica AC" defaultLabel="Gráficas AC" showDate />
       </ToggleBlock>
 
       <ToggleBlock title="Análisis Transitorio (.TRAN)">
         <h4 className="text-sm font-semibold text-foreground mb-2">Medición de Slew Rate</h4>
         <div className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary mb-3">SR = ΔV / Δt = [valor medido] V/μs</div>
         <h4 className="text-sm font-semibold text-foreground mb-2">📉 Formas de Onda Transitorias</h4>
-        <MultiImageGallery sectionId="sim-tran" columns={2} placeholder="Añadir gráfica transitoria" defaultLabel="Gráficas Transitorias" />
+        <MultiImageGallery sectionId="sim-tran" columns={2} placeholder="Añadir gráfica transitoria" defaultLabel="Gráficas Transitorias" showDate />
       </ToggleBlock>
 
       <div className="w-full h-px bg-border my-6" />
@@ -136,7 +136,7 @@ export function Simulaciones() {
             </table>
           </div>
           <h4 className="text-sm font-semibold text-foreground mb-2">📷 Capturas de Simulación</h4>
-          <MultiImageGallery sectionId={app.galleryId} columns={2} placeholder="Añadir captura" defaultLabel="Capturas" />
+          <MultiImageGallery sectionId={app.galleryId} columns={2} placeholder="Añadir captura" defaultLabel="Capturas" showDate />
         </ToggleBlock>
       ))}
     </div>
