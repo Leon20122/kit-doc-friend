@@ -345,9 +345,9 @@ const defaultData: ProjectData = {
       id: 'ref-datasheets',
       headers: ['Componente', 'Fabricante', 'Link'],
       rows: [
-        { id: 'rd1', cells: ['2N2222 (NPN)', 'ON Semiconductor', '📎 Datasheet'] },
-        { id: 'rd2', cells: ['2N2907 (PNP)', 'ON Semiconductor', '📎 Datasheet'] },
-        { id: 'rd3', cells: ['LM741 (Referencia)', 'Texas Instruments', '📎 Datasheet'] },
+        { id: 'rd1', cells: ['2N2222 (NPN)', 'ON Semiconductor', 'https://www.alldatasheet.com/datasheet-pdf/pdf/12591/ONSEMI/P2N2222A.html'] },
+        { id: 'rd2', cells: ['2N3906 (PNP)', 'ON Semiconductor', 'https://www.alldatasheet.com/datasheet-pdf/pdf/110693/STMICROELECTRONICS/2N3906.html'] },
+        { id: 'rd3', cells: ['LM741 (Referencia)', 'Texas Instruments', 'https://www.alldatasheet.com/datasheet-pdf/pdf/840177/TI1/LM741.html'] },
       ],
     },
     'ref-recursos': {
@@ -402,6 +402,17 @@ const defaultData: ProjectData = {
         { id: 'pc3', cells: ['Ganancia baja', 'BJT en saturación, valores incorrectos', 'Verificar punto de operación, medir Vce'] },
         { id: 'pc4', cells: ['Distorsión alta', 'Saturación de etapa, clase B crossover', 'Reducir amplitud, verificar polarización'] },
         { id: 'pc5', cells: ['Ruido excesivo', 'Fuente ruidosa, GND loops, acoplamiento', 'Mejorar desacoplo, verificar ruteo GND'] },
+      ],
+    },
+    'consideraciones-practicas': {
+      id: 'consideraciones-practicas',
+      headers: ['Aspecto', 'Recomendación', 'Aplicado'],
+      rows: [
+        { id: 'cp1', cells: ['Cables cortos', 'Minimizar inductancias parásitas', '✓ Sí'] },
+        { id: 'cp2', cells: ['Desacoplo', '100nF en cada rail de alimentación', 'Pendiente'] },
+        { id: 'cp3', cells: ['GND común', 'Tierra estrella / punto único', '✓ Sí'] },
+        { id: 'cp4', cells: ['Separación de etapas', 'Mantener espacio entre etapas', '✓ Sí'] },
+        { id: 'cp5', cells: ['Par diferencial', 'Q1/Q2 cercanos para matching térmico', '✓ Sí'] },
       ],
     },
   },

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useProject } from '@/contexts/ProjectContext';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, Paperclip, ExternalLink } from 'lucide-react';
 
 interface EditableTableProps {
   tableId: string;
@@ -13,6 +13,8 @@ export function EditableTable({ tableId, title, showAddRow = true }: EditableTab
   const table = data.tables[tableId];
   const [editingCell, setEditingCell] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [pendingFileCell, setPendingFileCell] = useState<{ rowId: string; cellIndex: number } | null>(null);
 
   if (!table) return null;
 
@@ -41,9 +43,30 @@ export function EditableTable({ tableId, title, showAddRow = true }: EditableTab
     return '';
   };
 
+  const isLinkColumn = (header: string) => {
+    const h = header.toLowerCase();
+    return h.includes('link') || h.includes('enlace') || h.includes('url');
+  };
+
+  const isUrl = (val: string) => /^https?:\/\//.test(val);
+
   const isBadgeColumn = (header: string) => {
     const h = header.toLowerCase();
     return h.includes('estado') || h.includes('prioridad') || h.includes('tipo');
+  };
+
+  const handleFileAttach = (rowId: string, cellIndex: number) => {
+    setPendingFileCell({ rowId, cellIndex });
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !pendingFileCell) return;
+    const url = URL.createObjectURL(file);
+    updateTableCell(tableId, pendingFileCell.rowId, pendingFileCell.cellIndex, url);
+    setPendingFileCell(null);
+    e.target.value = '';
   };
 
   return (
@@ -80,6 +103,25 @@ export function EditableTable({ tableId, title, showAddRow = true }: EditableTab
                         onKeyDown={e => e.key === 'Enter' && commitEdit(row.id, ci)}
                         autoFocus
                       />
+                    ) : isLinkColumn(table.headers[ci]) && isUrl(cell) ? (
+                      <div className="flex items-center gap-1">
+                        <a href={cell} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-xs flex items-center gap-1">
+                          <ExternalLink size={12} /> Ver Datasheet
+                        </a>
+                        <button onClick={() => startEdit(row.id, ci, cell)} className="text-muted-foreground hover:text-foreground p-0.5"><Paperclip size={12} /></button>
+                      </div>
+                    ) : isLinkColumn(table.headers[ci]) ? (
+                      <div className="flex items-center gap-1">
+                        <span
+                          className="cursor-pointer hover:bg-secondary/50 px-1 py-0.5 rounded transition-colors text-xs"
+                          onClick={() => startEdit(row.id, ci, cell)}
+                        >
+                          {cell || <span className="text-muted-foreground italic">vacío</span>}
+                        </span>
+                        <button onClick={() => handleFileAttach(row.id, ci)} className="text-muted-foreground hover:text-primary p-0.5" title="Adjuntar archivo">
+                          <Paperclip size={12} />
+                        </button>
+                      </div>
                     ) : (
                       <span
                         className={`cursor-pointer hover:bg-secondary/50 px-1 py-0.5 rounded transition-colors ${
@@ -116,6 +158,7 @@ export function EditableTable({ tableId, title, showAddRow = true }: EditableTab
         )}
         <span className="text-xs text-muted-foreground">Total — {table.rows.length} registros</span>
       </div>
+      <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileSelected} />
     </div>
   );
 }
