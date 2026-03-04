@@ -460,7 +460,10 @@ const defaultData: ProjectData = {
     { id: 'ph3', name: 'Implementación', emoji: '🟡', percent: 60, status: 'En Progreso' },
     { id: 'ph4', name: 'Pruebas', emoji: '🔴', percent: 0, status: 'Pendiente' },
   ],
-  notes: {},
+  notes: {
+    'diseno-formula-iee': 'Ree = (Vee - Vbe) / Iee = (15 - 0.7) / 1mA = 14.3 kΩ → 15 kΩ',
+    'diseno-ganancia-conclusion': 'La ganancia estimada de ~74,000 V/V supera ampliamente el objetivo de >1,000 V/V.',
+  },
   images: {},
   teamMembers: [
     { id: 'tm1', initials: 'AG', name: 'Alejandro G.', role: 'Diseño y Coordinación', color: 'bg-info', isLeader: true },
@@ -534,6 +537,7 @@ function loadData(): ProjectData {
         ...defaultData,
         ...parsed,
         images: parsed.images || {},
+        notes: { ...defaultData.notes, ...(parsed.notes || {}) },
         tables: { ...defaultData.tables, ...(parsed.tables || {}) },
         teamMembers: parsed.teamMembers || defaultData.teamMembers,
         timeline: parsed.timeline || defaultData.timeline,
@@ -680,6 +684,26 @@ export function useProjectStore() {
           [tableId]: { ...table, rows: table.rows.filter(r => r.id !== rowId) },
         },
       };
+    });
+  }, []);
+
+  const createTable = useCallback((tableId: string, headers: string[]) => {
+    setData(prev => {
+      if (prev.tables[tableId]) return prev;
+      return {
+        ...prev,
+        tables: {
+          ...prev.tables,
+          [tableId]: { id: tableId, headers, rows: [] },
+        },
+      };
+    });
+  }, []);
+
+  const removeTable = useCallback((tableId: string) => {
+    setData(prev => {
+      const { [tableId]: _, ...rest } = prev.tables;
+      return { ...prev, tables: rest };
     });
   }, []);
 
@@ -883,6 +907,8 @@ export function useProjectStore() {
     updateTableCell,
     addTableRow,
     removeTableRow,
+    createTable,
+    removeTable,
     updateNote,
     addActivity,
     updateActivity,
