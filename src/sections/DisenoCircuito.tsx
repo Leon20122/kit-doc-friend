@@ -3,6 +3,8 @@ import { Callout } from '@/components/Callout';
 import { ImageGallery } from '@/components/ImageGallery';
 import { MultiImageGallery } from '@/components/MultiImageGallery';
 import { EditableTable } from '@/components/EditableTable';
+import { EditableNote } from '@/components/EditableNote';
+import { DynamicTableBlock } from '@/components/DynamicTableBlock';
 
 export function DisenoCircuito() {
   return (
@@ -41,18 +43,29 @@ export function DisenoCircuito() {
         <h4 className="text-sm font-semibold text-foreground mb-2">Parámetros de Diseño</h4>
         <EditableTable tableId="diseno-par-diferencial" showAddRow={true} />
         <h4 className="text-sm font-semibold text-foreground mb-2 mt-3">Fuente de Corriente (Iee)</h4>
-        <div className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary">Ree = (Vee - Vbe) / Iee = (15 - 0.7) / 1mA = 14.3 kΩ → 15 kΩ</div>
+        <EditableNote
+          noteId="diseno-formula-iee"
+          placeholder="Ree = (Vee - Vbe) / Iee = ..."
+          className="font-mono text-primary bg-secondary/50 min-h-[40px]"
+        />
+        <DynamicTableBlock sectionId="diseno-par-diferencial-extra" />
       </ToggleBlock>
 
       <ToggleBlock title="Etapa de Ganancia (Etapa 2)">
         <EditableTable tableId="diseno-etapa-ganancia" showAddRow={true} />
+        <DynamicTableBlock sectionId="diseno-etapa-ganancia-extra" />
       </ToggleBlock>
 
       <ToggleBlock title="Ganancia Total Estimada">
         <EditableTable tableId="diseno-ganancia-total" showAddRow={true} />
         <Callout type="success" icon="✅">
-          La ganancia estimada de ~74,000 V/V supera ampliamente el objetivo de {'>'}1,000 V/V.
+          <EditableNote
+            noteId="diseno-ganancia-conclusion"
+            placeholder="Conclusión sobre la ganancia estimada..."
+            className="bg-transparent border-none min-h-[40px] p-0"
+          />
         </Callout>
+        <DynamicTableBlock sectionId="diseno-ganancia-total-extra" />
       </ToggleBlock>
 
       <div className="w-full h-px bg-border my-6" />
