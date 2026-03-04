@@ -534,6 +534,7 @@ function loadData(): ProjectData {
         ...defaultData,
         ...parsed,
         images: parsed.images || {},
+        tables: { ...defaultData.tables, ...(parsed.tables || {}) },
         teamMembers: parsed.teamMembers || defaultData.teamMembers,
         timeline: parsed.timeline || defaultData.timeline,
         historyEntries: parsed.historyEntries || defaultData.historyEntries,
