@@ -448,6 +448,65 @@ const defaultData: ProjectData = {
         { id: 'dgt5', cells: ['Av total (dB)', '≈ 97.4 dB', '20·log(73920)'] },
       ],
     },
+    'sim-software': {
+      id: 'sim-software',
+      headers: ['Software', 'Versión', 'Propósito'],
+      rows: [
+        { id: 'ss1', cells: ['LTSpice', 'XVII', 'Simulación principal del circuito'] },
+        { id: 'ss2', cells: ['Multisim', '14.x', 'Verificación alternativa'] },
+      ],
+    },
+    'sim-dc-resultados': {
+      id: 'sim-dc-resultados',
+      headers: ['Transistor', 'Ic (mA)', 'Vce (V)', 'Vbe (V)', 'Región'],
+      rows: [
+        { id: 'sdr1', cells: ['Q1 (NPN)', '0.50', '7.2', '0.65', 'Activa'] },
+        { id: 'sdr2', cells: ['Q2 (NPN)', '0.50', '7.2', '0.65', 'Activa'] },
+        { id: 'sdr3', cells: ['Q3 (PNP)', '0.50', '5.8', '-0.66', 'Activa'] },
+        { id: 'sdr4', cells: ['Q4 (PNP)', '0.50', '5.8', '-0.66', 'Activa'] },
+        { id: 'sdr5', cells: ['Q5 (NPN)', '1.02', '8.3', '0.68', 'Activa'] },
+        { id: 'sdr6', cells: ['Q6 (NPN)', '2.1', '12.5', '0.70', 'Activa'] },
+        { id: 'sdr7', cells: ['Q7 (PNP)', '2.1', '12.5', '-0.70', 'Activa'] },
+      ],
+    },
+    'sim-ac-resultados': {
+      id: 'sim-ac-resultados',
+      headers: ['Parámetro', 'Simulado', 'Objetivo', 'Estado'],
+      rows: [
+        { id: 'sar1', cells: ['Ganancia DC', '95.2 dB', '> 60 dB', '✓ Cumple'] },
+        { id: 'sar2', cells: ['Frecuencia de corte (-3dB)', '18.5 kHz', '> 10 kHz', '✓ Cumple'] },
+        { id: 'sar3', cells: ['Producto ganancia-ancho banda', '1.05 MHz', '—', 'Info'] },
+        { id: 'sar4', cells: ['Margen de fase', '62°', '> 45°', '✓ Cumple'] },
+        { id: 'sar5', cells: ['Margen de ganancia', '12 dB', '> 6 dB', '✓ Cumple'] },
+      ],
+    },
+    'sim-app-buffer': {
+      id: 'sim-app-buffer',
+      headers: ['Parámetro', 'Esperado', 'Simulado', 'Estado'],
+      rows: [
+        { id: 'sab1', cells: ['Ganancia', '1.000', '0.998', '✓'] },
+        { id: 'sab2', cells: ['Impedancia de salida', 'Baja', '~50 Ω', '✓'] },
+        { id: 'sab3', cells: ['Distorsión', 'Mínima', '< 0.1%', '✓'] },
+      ],
+    },
+    'sim-app-inversor': {
+      id: 'sim-app-inversor',
+      headers: ['Parámetro', 'Esperado', 'Simulado', 'Estado'],
+      rows: [
+        { id: 'sai1', cells: ['Ganancia', '-10.00', '-9.97', '✓'] },
+        { id: 'sai2', cells: ['BW (-3dB)', '~100 kHz', '95 kHz', '✓'] },
+        { id: 'sai3', cells: ['Fase a 1kHz', '180°', '179.8°', '✓'] },
+      ],
+    },
+    'sim-app-noinversor': {
+      id: 'sim-app-noinversor',
+      headers: ['Parámetro', 'Esperado', 'Simulado', 'Estado'],
+      rows: [
+        { id: 'san1', cells: ['Ganancia', '+10.00', '+9.98', '✓'] },
+        { id: 'san2', cells: ['BW (-3dB)', '~100 kHz', '98 kHz', '✓'] },
+        { id: 'san3', cells: ['Fase a 1kHz', '0°', '-0.2°', '✓'] },
+      ],
+    },
   },
   activities: [
     { id: 'a1', time: 'Hoy, 10:30 AM', text: 'Diseño del Circuito actualizado por Alejandro G. (Diagrama esquemático finalizado).', color: 'red' },
@@ -463,6 +522,10 @@ const defaultData: ProjectData = {
   notes: {
     'diseno-formula-iee': 'Ree = (Vee - Vbe) / Iee = (15 - 0.7) / 1mA = 14.3 kΩ → 15 kΩ',
     'diseno-ganancia-conclusion': 'La ganancia estimada de ~74,000 V/V supera ampliamente el objetivo de >1,000 V/V.',
+    'sim-slew-rate': 'SR = ΔV / Δt = [valor medido] V/μs',
+    'sim-eq-buffer': '',
+    'sim-eq-inversor': 'Av = -Rf/Ri = -100k/10k = -10',
+    'sim-eq-noinversor': 'Av = 1 + Rf/Ri = 1 + 90k/10k = +10',
   },
   images: {},
   teamMembers: [

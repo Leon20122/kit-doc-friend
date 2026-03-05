@@ -12,7 +12,7 @@ export function ToggleBlock({ title, defaultOpen = false, badge, children }: Tog
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="border border-border rounded-lg mb-2 overflow-hidden">
+    <div className="border border-border rounded-lg mb-2 overflow-hidden group/toggle">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-foreground hover:bg-secondary/30 transition-colors"
