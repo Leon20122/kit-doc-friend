@@ -113,7 +113,7 @@ export function DisenoCircuito() {
                 <button onClick={(e) => { e.stopPropagation(); confirmEditTitle(section.id); }} className="text-success"><Check size={14} /></button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 flex-1">
+              <div className="flex items-center gap-2 flex-1 group">
                 <span>{section.title}</span>
                 <button
                   onClick={(e) => { e.stopPropagation(); startEditTitle(section); }}
