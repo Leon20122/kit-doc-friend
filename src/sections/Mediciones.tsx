@@ -1,5 +1,6 @@
 import { EditableTable } from '@/components/EditableTable';
 import { MultiImageGallery } from '@/components/MultiImageGallery';
+import { DynamicTableBlock } from '@/components/DynamicTableBlock';
 
 export function Mediciones() {
   return (
@@ -11,21 +12,24 @@ export function Mediciones() {
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📐 Medición de Punto DC</h2>
       <div className="bg-card rounded-xl border border-border p-5 mb-6">
-        <EditableTable tableId="medicion-dc" />
+        <EditableTable tableId="medicion-dc" showAddRow={true} />
+        <DynamicTableBlock sectionId="medicion-dc-extra" />
       </div>
 
       <div className="w-full h-px bg-border my-6" />
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📈 Medición de Ganancia</h2>
       <div className="bg-card rounded-xl border border-border p-5 mb-6">
-        <EditableTable tableId="ganancia-frecuencia" title="Ganancia en Lazo Abierto (por frecuencia)" />
+        <EditableTable tableId="ganancia-frecuencia" title="Ganancia en Lazo Abierto (por frecuencia)" showAddRow={true} />
+        <DynamicTableBlock sectionId="ganancia-frecuencia-extra" />
       </div>
 
       <div className="w-full h-px bg-border my-6" />
 
       <h2 className="text-lg font-semibold text-foreground mb-3">🔄 Comparación: Simulación vs Medición</h2>
       <div className="bg-card rounded-xl border border-border p-5 mb-6">
-        <EditableTable tableId="comparacion-sim-med" />
+        <EditableTable tableId="comparacion-sim-med" showAddRow={true} />
+        <DynamicTableBlock sectionId="comparacion-sim-med-extra" />
       </div>
 
       <div className="w-full h-px bg-border my-6" />

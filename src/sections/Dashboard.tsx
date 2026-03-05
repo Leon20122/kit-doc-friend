@@ -112,23 +112,27 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           <ul className="space-y-3 mb-3">
             {data.activities.slice(0, 5).map(act => (
               <li key={act.id} className="flex items-start gap-3 group">
-                <button
-                  onClick={() => {
-                    const nextColor = colorOptions[(colorOptions.findIndex(c => c.value === act.color) + 1) % colorOptions.length].value;
-                    updateActivity(act.id, 'color', nextColor);
-                  }}
-                  className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${activityColors[act.color]} cursor-pointer`}
-                />
+                <div className="flex flex-col items-center gap-1 mt-1">
+                  {colorOptions.map(c => (
+                    <button
+                      key={c.value}
+                      onClick={() => updateActivity(act.id, 'color', c.value)}
+                      className={`w-3 h-3 rounded-full flex-shrink-0 transition-all ${activityColors[c.value]} ${act.color === c.value ? 'ring-2 ring-foreground scale-110' : 'opacity-0 group-hover:opacity-60 scale-75'}`}
+                    />
+                  ))}
+                </div>
                 <div className="flex-1 min-w-0">
                   <input
                     value={act.time}
                     onChange={e => updateActivity(act.id, 'time', e.target.value)}
-                    className="text-xs text-muted-foreground bg-transparent border-none outline-none w-full"
+                    className="text-xs text-muted-foreground bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+                    placeholder="Fecha/hora..."
                   />
                   <input
                     value={act.text}
                     onChange={e => updateActivity(act.id, 'text', e.target.value)}
-                    className="text-sm text-foreground/90 bg-transparent border-none outline-none w-full"
+                    className="text-sm text-foreground/90 bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+                    placeholder="Descripción..."
                   />
                 </div>
                 <button onClick={() => removeActivity(act.id)} className="opacity-0 group-hover:opacity-100 text-destructive transition-opacity">

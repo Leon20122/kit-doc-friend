@@ -30,7 +30,7 @@ export function ImageGallery({ galleryId, columns = 2, placeholder = 'Añadir im
     <div className={`grid grid-cols-1 ${columns === 2 ? 'md:grid-cols-2' : columns === 3 ? 'md:grid-cols-3' : ''} gap-4`}>
       {images.map((src, i) => (
         <div key={i} className="relative group rounded-xl overflow-hidden border border-border bg-card">
-          <img src={src} alt={`${galleryId}-${i}`} className="w-full h-48 object-cover" />
+          <img src={src} alt={`${galleryId}-${i}`} className="w-full max-h-[400px] object-contain bg-secondary/30 p-2" />
           <button
             onClick={() => removeImage(galleryId, i)}
             className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
