@@ -710,9 +710,7 @@ async function saveToCloud(projectData: ProjectData) {
 export function useProjectStore() {
   const [data, setData] = useState<ProjectData>(loadData);
   const [cloudLoaded, setCloudLoaded] = useState(false);
-
-  const lastSaveTimestamp = useRef<string | null>(null);
-  const savingNow = useRef(false);
+  const syncRef = useRef({ lastTimestamp: null as string | null, saving: false });
 
   // On mount: load from cloud (takes priority over localStorage)
   useEffect(() => {
