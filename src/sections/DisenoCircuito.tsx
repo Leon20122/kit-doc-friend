@@ -75,12 +75,11 @@ export function DisenoCircuito() {
         <strong>Arquitectura de 3 etapas con compensación Miller</strong><br/>
         Se seleccionó esta topología por su balance entre complejidad y rendimiento.
       </Callout>
-
+      
       <div className="flex flex-wrap items-center justify-center gap-3 mb-6 p-4 bg-card rounded-xl border border-border">
-        {[
+        {['📈 Etapa de\nReferencia','🪞Etapa \nEspejo de Corriente',
           'V+ ──┐\nV- ──┘\n🔀 Par Diferencial\n(Q1, Q2, Q3, Q4)',
-          '📈 Emisor Común\n(Q5)\n+ Compensación (Cc)',
-          '🔊 Push-Pull\n(Q6, Q7)\nClase AB',
+          '🔊 Etapa de\nEmisor común con carga activa',
         ].map((block, i) => (
           <div key={i} className="flex items-center gap-3">
             {i > 0 && <span className="text-primary text-xl">→</span>}
