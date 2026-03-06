@@ -558,9 +558,10 @@ const defaultData: ProjectData = {
   },
   images: {},
   teamMembers: [
-    { id: 'tm1', initials: 'AG', name: 'Alejandro G.', role: 'Diseño y Coordinación', color: 'bg-info', isLeader: true },
-    { id: 'tm2', initials: 'ML', name: 'María L.', role: 'Simulación y Análisis', color: 'bg-warning' },
-    { id: 'tm3', initials: 'CR', name: 'Carlos R.', role: 'Implementación PCB', color: 'bg-success' },
+    { id: 'tm1', initials: 'SP', name: 'Sebastián Pupo', role: 'PCB y Coordinación', color: 'bg-info', isLeader: true },
+    { id: 'tm2', initials: 'AR', name: 'Alejandro Rovira', role: 'Diseño y Simulación', color: 'bg-warning' },
+    { id: 'tm3', initials: 'JV', name: 'José Villa', role: 'Implementación', color: 'bg-success' },
+    { id: 'tm4', initials: 'AS', name: 'Adrián Silva', role: 'Documentación', color: 'bg-primary' },
   ],
   timeline: [
     { id: 'tl1', label: 'Inicio', status: 'completed' },
