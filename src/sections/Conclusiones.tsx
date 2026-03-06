@@ -7,7 +7,7 @@ export function Conclusiones() {
     <div className="animate-fade-in">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground flex items-center gap-2"><span>✅</span> Conclusiones</h1>
-        <p className="text-sm text-muted-foreground mt-1">Análisis de resultados, lecciones aprendidas y trabajo futuro.</p>
+        <p className="text-sm text-muted-foreground mt-1">Análisis de resultados y lecciones aprendidas.</p>
       </div>
 
       <h2 className="text-lg font-semibold text-foreground mb-3">🏆 Resultados Alcanzados</h2>
@@ -25,26 +25,9 @@ export function Conclusiones() {
       <div className="w-full h-px bg-border my-6" />
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📚 Lecciones Aprendidas</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="bg-card rounded-xl border border-border p-5">
-          <h3 className="text-sm font-semibold text-primary mb-3">⚡ Técnicas</h3>
-          <EditableNote noteId="lecciones-tecnicas" placeholder="• El matching de transistores es crítico..." />
-        </div>
-        <div className="bg-card rounded-xl border border-border p-5">
-          <h3 className="text-sm font-semibold text-primary mb-3">📋 De Proceso</h3>
-          <EditableNote noteId="lecciones-proceso" placeholder="• Construir y probar por etapas reduce errores..." />
-        </div>
-      </div>
-
-      <div className="w-full h-px bg-border my-6" />
-
-      <h2 className="text-lg font-semibold text-foreground mb-3">🚀 Trabajo Futuro / Mejoras</h2>
       <div className="bg-card rounded-xl border border-border p-5 mb-6">
-        <EditableTable tableId="conclusiones-mejoras" />
+        <EditableNote noteId="lecciones-aprendidas" placeholder="Escribe aquí las lecciones aprendidas (técnicas y de proceso)..." />
       </div>
-
-      <h2 className="text-lg font-semibold text-foreground mb-3">💭 Reflexión Final</h2>
-      <EditableNote noteId="reflexion-final" placeholder="Escribir aquí una reflexión personal/grupal..." />
     </div>
   );
 }
