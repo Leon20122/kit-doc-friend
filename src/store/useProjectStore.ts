@@ -405,6 +405,17 @@ const defaultData: ProjectData = {
         { id: 'pc5', cells: ['Ruido excesivo', 'Fuente ruidosa, GND loops, acoplamiento', 'Mejorar desacoplo, verificar ruteo GND'] },
       ],
     },
+    'costos': {
+      id: 'costos',
+      headers: ['Componente', 'Cantidad', 'Precio Unitario', 'Subtotal'],
+      rows: [
+        { id: 'cost1', cells: ['Transistor 2N2222', '4', '$0.50', '$2.00'] },
+        { id: 'cost2', cells: ['Transistor 2N2907', '3', '$0.60', '$1.80'] },
+        { id: 'cost3', cells: ['Resistencias (surtido)', '12', '$0.10', '$1.20'] },
+        { id: 'cost4', cells: ['Capacitores', '3', '$0.30', '$0.90'] },
+        { id: 'cost5', cells: ['Protoboard', '1', '$5.00', '$5.00'] },
+      ],
+    },
     'consideraciones-practicas': {
       id: 'consideraciones-practicas',
       headers: ['Aspecto', 'Recomendación', 'Aplicado'],
