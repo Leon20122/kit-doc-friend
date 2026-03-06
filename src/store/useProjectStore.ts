@@ -756,15 +756,15 @@ export function useProjectStore() {
 
     // Fallback polling every 10s in case realtime fails
     const pollInterval = setInterval(async () => {
-      if (savingNow.current) return;
+      if (syncRef.current.saving) return;
       try {
         const { data: row } = await supabase
           .from('project_data')
           .select('data, updated_at')
           .eq('id', 'main')
           .maybeSingle();
-        if (row?.data && row.updated_at && row.updated_at !== lastSaveTimestamp.current) {
-          lastSaveTimestamp.current = row.updated_at;
+        if (row?.data && row.updated_at && row.updated_at !== syncRef.current.lastTimestamp) {
+          syncRef.current.lastTimestamp = row.updated_at;
           const merged = mergeWithDefaults(row.data);
           setData(merged);
           saveData(merged);
