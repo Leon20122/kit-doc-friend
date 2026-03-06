@@ -52,6 +52,13 @@ export function Implementacion() {
       <div className="bg-card rounded-xl border border-border p-5">
         <EditableTable tableId="consideraciones-practicas" />
       </div>
+
+      <div className="w-full h-px bg-border my-6" />
+
+      <h2 className="text-lg font-semibold text-foreground mb-3">📁 Archivos de PCB</h2>
+      <div className="bg-card rounded-xl border border-border p-5">
+        <EditableTable tableId="archivos-pcb" showAddRow showColumnControls showMeta />
+      </div>
     </div>
   );
 }

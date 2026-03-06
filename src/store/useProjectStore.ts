@@ -530,6 +530,20 @@ const defaultData: ProjectData = {
         { id: 'san3', cells: ['Fase a 1kHz', '0°', '-0.2°', '✓'] },
       ],
     },
+    'archivos-simulacion': {
+      id: 'archivos-simulacion',
+      headers: ['Nombre del Archivo', 'Tipo', 'Descripción', 'Estado'],
+      rows: [
+        { id: 'asim1', cells: ['amplificador_opamp.asc', 'LTSpice', 'Esquemático principal del amplificador', 'Completado'] },
+      ],
+    },
+    'archivos-pcb': {
+      id: 'archivos-pcb',
+      headers: ['Nombre del Archivo', 'Tipo', 'Descripción', 'Estado'],
+      rows: [
+        { id: 'apcb1', cells: ['pcb_layout.kicad_pcb', 'KiCad', 'Diseño de PCB principal', 'Completado'] },
+      ],
+    },
   },
   activities: [
     { id: 'a1', time: 'Hoy, 10:30 AM', text: 'Diseño del Circuito actualizado por Alejandro G. (Diagrama esquemático finalizado).', color: 'red' },
