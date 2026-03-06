@@ -50,26 +50,3 @@ export function Simulaciones() {
       </ToggleBlock>
 
       <div className="w-full h-px bg-border my-6" />
-
-      <h2 className="text-lg font-semibold text-foreground mb-3">🔬 Simulación de Aplicaciones</h2>
-      
-      {[
-        { title: 'Buffer (Seguidor de Voltaje, Av = 1)', tableId: 'sim-app-buffer', galleryId: 'sim-buffer', noteId: 'sim-eq-buffer' },
-        { title: 'Amplificador Inversor (Av = -10)', tableId: 'sim-app-inversor', galleryId: 'sim-inversor', noteId: 'sim-eq-inversor' },
-        { title: 'Amplificador No Inversor (Av = +10)', tableId: 'sim-app-noinversor', galleryId: 'sim-noinversor', noteId: 'sim-eq-noinversor' },
-      ].map((app, idx) => (
-        <ToggleBlock key={idx} title={app.title}>
-          <EditableNote
-            noteId={app.noteId}
-            placeholder="Ecuación de diseño..."
-            className="font-mono text-primary bg-secondary/50 min-h-[40px] mb-3"
-          />
-          <EditableTable tableId={app.tableId} showAddRow={true} />
-          <DynamicTableBlock sectionId={`${app.tableId}-extra`} />
-          <h4 className="text-sm font-semibold text-foreground mb-2 mt-3">📷 Capturas de Simulación</h4>
-          <MultiImageGallery sectionId={app.galleryId} columns={2} placeholder="Añadir captura" defaultLabel="Capturas" showDate />
-        </ToggleBlock>
-      ))}
-    </div>
-  );
-}
