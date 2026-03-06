@@ -106,40 +106,71 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
       {/* Activity + Team */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        {/* Recent Activity - Editable */}
+        {/* Recent Activity - Auto-generated from changelog dates */}
         <div className="bg-card rounded-xl border border-border p-5">
           <h3 className="font-semibold text-white mb-3">Recent Activity</h3>
           <ul className="space-y-3 mb-3">
-            {data.activities.slice(0, 5).map(act => (
-              <li key={act.id} className="flex items-start gap-3 group">
-                <div className="flex flex-col items-center gap-1 mt-1">
-                  {colorOptions.map(c => (
-                    <button
-                      key={c.value}
-                      onClick={() => updateActivity(act.id, 'color', c.value)}
-                      className={`w-3 h-3 rounded-full flex-shrink-0 transition-all ${activityColors[c.value]} ${act.color === c.value ? 'ring-2 ring-foreground scale-110' : 'opacity-0 group-hover:opacity-60 scale-75'}`}
+            {data.activities.slice(0, 5).map(act => {
+              // Try to generate relative time from changelog dates
+              const changelogTable = data.tables['versiones'];
+              const matchingRow = changelogTable?.rows.find(r => r.cells.some(c => c === act.text.split(':')[0]?.trim()));
+              const relativeTime = (() => {
+                if (changelogTable) {
+                  // Find date column (index 1 typically)
+                  const dateColIdx = changelogTable.headers.findIndex(h => h.toLowerCase().includes('fecha'));
+                  if (dateColIdx >= 0) {
+                    const row = changelogTable.rows.find(r => act.text.includes(r.cells[3] || '') || act.text.includes(r.cells[2] || ''));
+                    if (row) {
+                      const dateStr = row.cells[dateColIdx];
+                      const parsed = new Date(dateStr);
+                      if (!isNaN(parsed.getTime())) {
+                        const now = new Date();
+                        const diffMs = now.getTime() - parsed.getTime();
+                        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                        if (diffDays === 0) return 'Hoy';
+                        if (diffDays === 1) return 'Ayer';
+                        if (diffDays < 7) return `Hace ${diffDays} días`;
+                        if (diffDays < 30) return `Hace ${Math.floor(diffDays / 7)} semana${Math.floor(diffDays / 7) > 1 ? 's' : ''}`;
+                        if (diffDays < 365) return `Hace ${Math.floor(diffDays / 30)} mes${Math.floor(diffDays / 30) > 1 ? 'es' : ''}`;
+                        return `Hace ${Math.floor(diffDays / 365)} año${Math.floor(diffDays / 365) > 1 ? 's' : ''}`;
+                      }
+                    }
+                  }
+                }
+                return null;
+              })();
+
+              return (
+                <li key={act.id} className="flex items-start gap-3 group">
+                  <div className="flex flex-col items-center gap-1 mt-1">
+                    {colorOptions.map(c => (
+                      <button
+                        key={c.value}
+                        onClick={() => updateActivity(act.id, 'color', c.value)}
+                        className={`w-3 h-3 rounded-full flex-shrink-0 transition-all ${activityColors[c.value]} ${act.color === c.value ? 'ring-2 ring-foreground scale-110' : 'opacity-0 group-hover:opacity-60 scale-75'}`}
+                      />
+                    ))}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <input
+                      value={relativeTime || act.time}
+                      onChange={e => updateActivity(act.id, 'time', e.target.value)}
+                      className="text-xs text-muted-foreground bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+                      placeholder="Fecha/hora..."
                     />
-                  ))}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <input
-                    value={act.time}
-                    onChange={e => updateActivity(act.id, 'time', e.target.value)}
-                    className="text-xs text-muted-foreground bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
-                    placeholder="Fecha/hora..."
-                  />
-                  <input
-                    value={act.text}
-                    onChange={e => updateActivity(act.id, 'text', e.target.value)}
-                    className="text-sm text-foreground/90 bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
-                    placeholder="Descripción..."
-                  />
-                </div>
-                <button onClick={() => removeActivity(act.id)} className="opacity-0 group-hover:opacity-100 text-destructive transition-opacity">
-                  <X size={14} />
-                </button>
-              </li>
-            ))}
+                    <input
+                      value={act.text}
+                      onChange={e => updateActivity(act.id, 'text', e.target.value)}
+                      className="text-sm text-foreground/90 bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+                      placeholder="Descripción..."
+                    />
+                  </div>
+                  <button onClick={() => removeActivity(act.id)} className="opacity-0 group-hover:opacity-100 text-destructive transition-opacity">
+                    <X size={14} />
+                  </button>
+                </li>
+              );
+            })}
           </ul>
           <div className="flex gap-2">
             <input
@@ -289,13 +320,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         ))}
       </div>
 
-      {/* Spec + Changelog tables */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+      {/* Changelog table - synced with Control de Cambios */}
+      <div className="mb-6">
         <div className="bg-card rounded-xl border border-border p-5">
-          <EditableTable tableId="specs-dashboard" title="⚙ Tabla de Especificaciones" />
-        </div>
-        <div className="bg-card rounded-xl border border-border p-5">
-          <EditableTable tableId="changelog" title="⚙ Control de Cambios (Changelog)" />
+          <EditableTable tableId="versiones" title="⚙ Control de Cambios (Changelog)" />
         </div>
       </div>
 
