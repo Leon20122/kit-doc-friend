@@ -710,13 +710,16 @@ async function saveToCloud(projectData: ProjectData) {
 export function useProjectStore() {
   const [data, setData] = useState<ProjectData>(loadData);
   const [cloudLoaded, setCloudLoaded] = useState(false);
-  
 
-  const isLocalUpdate = useRef(false);
+  const lastSaveTimestamp = useRef<string | null>(null);
+  const savingNow = useRef(false);
 
   // On mount: load from cloud (takes priority over localStorage)
   useEffect(() => {
+    let isActive = true;
+
     loadFromCloud().then(cloudData => {
+      if (!isActive) return;
       if (cloudData) {
         setData(cloudData);
         saveData(cloudData);
@@ -733,29 +736,57 @@ export function useProjectStore() {
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'project_data', filter: 'id=eq.main' },
         (payload) => {
-          // Skip if this update was triggered by us
-          if (isLocalUpdate.current) {
-            isLocalUpdate.current = false;
+          // Skip if we just saved
+          if (savingNow.current) {
+            savingNow.current = false;
+            if (payload.new?.updated_at) {
+              lastSaveTimestamp.current = payload.new.updated_at;
+            }
             return;
           }
           if (payload.new?.data) {
             const merged = mergeWithDefaults(payload.new.data);
             setData(merged);
             saveData(merged);
+            if (payload.new?.updated_at) {
+              lastSaveTimestamp.current = payload.new.updated_at;
+            }
           }
         }
       )
       .subscribe();
 
+    // Fallback polling every 10s in case realtime fails
+    const pollInterval = setInterval(async () => {
+      if (savingNow.current) return;
+      try {
+        const { data: row } = await supabase
+          .from('project_data')
+          .select('data, updated_at')
+          .eq('id', 'main')
+          .maybeSingle();
+        if (row?.data && row.updated_at && row.updated_at !== lastSaveTimestamp.current) {
+          lastSaveTimestamp.current = row.updated_at;
+          const merged = mergeWithDefaults(row.data);
+          setData(merged);
+          saveData(merged);
+        }
+      } catch {}
+    }, 10000);
+
     return () => {
+      isActive = false;
+      clearInterval(pollInterval);
       supabase.removeChannel(channel);
     };
   }, []);
 
   // Save to both localStorage and cloud on every change
-  const saveToCloudMarked = useRef(debounce((d: ProjectData) => {
-    isLocalUpdate.current = true;
-    saveToCloud(d);
+  const saveToCloudMarked = useRef(debounce(async (d: ProjectData) => {
+    savingNow.current = true;
+    await saveToCloud(d);
+    // Reset after a short delay to allow realtime event to arrive
+    setTimeout(() => { savingNow.current = false; }, 2000);
   }, 1500)).current;
 
   useEffect(() => {
