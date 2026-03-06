@@ -170,11 +170,11 @@ export function MarcoTeorico() {
         onChange={e => setNote('mt-titulo-ecuaciones', e.target.value)}
         className="text-sm font-semibold text-foreground mb-2 bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
       />
-      <EditableNote
-        noteId="mt-ecuaciones-bjt"
-        placeholder="Ecuaciones fundamentales del BJT..."
-        className="min-h-[100px] font-mono text-sm"
-      />
+      <div className="space-y-1">
+        {['Ic = β × Ib', 'Ie = Ic + Ib = (β + 1) × Ib', 'Ic = Is × exp(Vbe / VT)', 'gm = Ic / VT ≈ 38.5 × Ic  [A/V]  (a 27°C)', 'rπ = β / gm = VT / Ib'].map((eq, i) => (
+          <div key={i} className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary">{eq}</div>
+        ))}
+      </div>
     </div>
   );
 }
