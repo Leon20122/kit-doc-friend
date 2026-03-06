@@ -64,31 +64,72 @@ export function MarcoTeorico() {
         ))}
       </div>
 
-      {/* Editable Toggles */}
-      {[
-        { id: 'mt-toggle-referencia', titleDefault: '📈 Etapa de Referencia', contentDefault: 'Función: Fija el nivel de voltaje y de corriente para el resto de las etapas del OpAmp\n\nComponentes: El transistor NPN (Q8) como fuente de corriente (Iee).\n\nEcuaciones Clave:\nAd = gm × Rc\ngm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)' },
-        { id: 'mt-toggle-espejo', titleDefault: 'Etapa Espejo de Corriente', contentDefault: 'Función: Refleja la corriente que conduce a través del transistor de la etapa de referencia.\n\n• Emisor común con carga activa' },
-        { id: 'mt-toggle-diferencial', titleDefault: 'Etapa Diferencial', contentDefault: 'Función: Amplifica la diferencia entre las dos señales de entrada (V+ y V-) mientras rechaza señales comunes.\n\nComponentes: Par de transistores NPN (Q1, Q2) con fuente de corriente (Q5).\n\nEcuaciones Clave:\nAd = gm × Rc\ngm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)' },
-        { id: 'mt-toggle-emisor', titleDefault: 'Etapa de emisor común con carga activa', contentDefault: 'Función: Proporciona alta impedancia de salida y por tanto alta ganancia de voltaje.\n\nEcuaciones Clave:\nAd = gm × Rc\ngm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)' },
-      ].map(toggle => (
-        <ToggleBlock
-          key={toggle.id}
-          title={
-            <input
-              value={getNote(`${toggle.id}-title`, toggle.titleDefault)}
-              onChange={e => { e.stopPropagation(); setNote(`${toggle.id}-title`, e.target.value); }}
-              onClick={e => e.stopPropagation()}
-              className="bg-transparent border-none outline-none text-sm font-medium text-foreground flex-1 w-full hover:bg-secondary/30 rounded px-1 transition-colors"
-            />
-          }
-        >
-          <EditableNote
-            noteId={`${toggle.id}-content`}
-            placeholder="Escribe el contenido de esta sección..."
-            className="min-h-[100px] text-sm"
-          />
-        </ToggleBlock>
-      ))}
+      <ToggleBlock title={
+        <input
+          value={getNote('mt-toggle-referencia-title', '📈 Etapa de Referencia')}
+          onChange={e => { e.stopPropagation(); setNote('mt-toggle-referencia-title', e.target.value); }}
+          onClick={e => e.stopPropagation()}
+          className="bg-transparent border-none outline-none text-sm font-medium text-foreground flex-1 w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+        />
+      }>
+        <p className="text-sm text-foreground/80 mb-2"><strong>Función:</strong> Fija el nivel de voltaje y de corriente para el resto de las etapas del OpAmp</p>
+        <p className="text-sm text-foreground/80 mb-3"><strong>Componentes:</strong> El transistor NPN (Q8) como fuente de corriente (Iee).</p>
+        <h4 className="text-sm font-semibold text-foreground mb-2">Ecuaciones Clave</h4>
+        <div className="space-y-1">
+          {['Ad = gm × Rc', 'gm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)'].map((eq, i) => (
+            <div key={i} className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary">{eq}</div>
+          ))}
+        </div>
+      </ToggleBlock>
+
+      <ToggleBlock title={
+        <input
+          value={getNote('mt-toggle-espejo-title', 'Etapa Espejo de Corriente')}
+          onChange={e => { e.stopPropagation(); setNote('mt-toggle-espejo-title', e.target.value); }}
+          onClick={e => e.stopPropagation()}
+          className="bg-transparent border-none outline-none text-sm font-medium text-foreground flex-1 w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+        />
+      }>
+        <p className="text-sm text-foreground/80 mb-2"><strong>Función:</strong> Refleja la corriente que conduce a traves del transistor de la etapa de referencia.</p>
+        <ul className="text-sm text-foreground/80 space-y-1 ml-4 mb-3">
+          <li>• Emisor común con carga activa</li>
+        </ul>
+      </ToggleBlock>
+
+      <ToggleBlock title={
+        <input
+          value={getNote('mt-toggle-diferencial-title', 'Etapa Diferencial')}
+          onChange={e => { e.stopPropagation(); setNote('mt-toggle-diferencial-title', e.target.value); }}
+          onClick={e => e.stopPropagation()}
+          className="bg-transparent border-none outline-none text-sm font-medium text-foreground flex-1 w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+        />
+      }>
+        <p className="text-sm text-foreground/80 mb-2"><strong>Función:</strong> Amplifica la diferencia entre las dos señales de entrada (V+ y V-) mientras rechaza señales comunes.</p>
+        <p className="text-sm text-foreground/80 mb-3"><strong>Componentes:</strong> Par de transistores NPN (Q1, Q2) con fuente de corriente (Q5).</p>
+        <h4 className="text-sm font-semibold text-foreground mb-2">Ecuaciones Clave</h4>
+        <div className="space-y-1">
+          {['Ad = gm × Rc', 'gm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)'].map((eq, i) => (
+            <div key={i} className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary">{eq}</div>
+          ))}
+        </div>
+      </ToggleBlock>
+
+      <ToggleBlock title={
+        <input
+          value={getNote('mt-toggle-emisor-title', 'Etapa de emisor común con carga activa')}
+          onChange={e => { e.stopPropagation(); setNote('mt-toggle-emisor-title', e.target.value); }}
+          onClick={e => e.stopPropagation()}
+          className="bg-transparent border-none outline-none text-sm font-medium text-foreground flex-1 w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+        />
+      }>
+        <p className="text-sm text-foreground/80 mb-2"><strong>Función:</strong> Proporciona alta impedancia de salida y por tanto alta ganancia de voltaje.</p>
+        <h4 className="text-sm font-semibold text-foreground mb-2">Ecuaciones Clave</h4>
+        <div className="space-y-1">
+          {['Ad = gm × Rc', 'gm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)'].map((eq, i) => (
+            <div key={i} className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary">{eq}</div>
+          ))}
+        </div>
+      </ToggleBlock>
 
       <div className="w-full h-px bg-border my-6" />
 
