@@ -735,10 +735,10 @@ export function useProjectStore() {
         { event: 'UPDATE', schema: 'public', table: 'project_data', filter: 'id=eq.main' },
         (payload) => {
           // Skip if we just saved
-          if (savingNow.current) {
-            savingNow.current = false;
+          if (syncRef.current.saving) {
+            syncRef.current.saving = false;
             if (payload.new?.updated_at) {
-              lastSaveTimestamp.current = payload.new.updated_at;
+              syncRef.current.lastTimestamp = payload.new.updated_at;
             }
             return;
           }
