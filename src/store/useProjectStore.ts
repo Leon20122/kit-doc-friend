@@ -651,18 +651,19 @@ function loadData(): ProjectData {
 
 function saveData(data: ProjectData) {
   try {
-    // Strip base64 images from localStorage to save space
-    const liteData = { ...data, images: {} };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(liteData));
+    // Images are now URLs (not base64), safe to store
+    const serialized = JSON.stringify(data);
+    // Only write to localStorage if it fits (< 4MB to be safe)
+    if (serialized.length < 4_000_000) {
+      localStorage.setItem(STORAGE_KEY, serialized);
+    } else {
+      // Too large for localStorage, skip — cloud is the source of truth
+      console.warn('Data too large for localStorage, relying on cloud only');
+    }
   } catch (e) {
     if (e instanceof DOMException && e.name === 'QuotaExceededError') {
-      try {
-        localStorage.removeItem(STORAGE_KEY);
-        const liteData = { ...data, images: {} };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(liteData));
-      } catch {
-        // Cloud-only save, no big deal
-      }
+      console.warn('localStorage quota exceeded, relying on cloud only');
+      try { localStorage.removeItem(STORAGE_KEY); } catch {}
     }
   }
 }
@@ -698,8 +699,30 @@ async function loadFromCloud(): Promise<ProjectData | null> {
   return null;
 }
 
+function isDataMeaningful(projectData: ProjectData): boolean {
+  // Check if this data has user content beyond defaults
+  const noteCount = Object.keys(projectData.notes).length;
+  const imageCount = Object.values(projectData.images).reduce((sum, arr) => sum + arr.length, 0);
+  const tableRowCount = Object.values(projectData.tables).reduce((sum, t) => sum + t.rows.length, 0);
+  return noteCount > 5 || imageCount > 0 || tableRowCount > 10;
+}
+
 async function saveToCloud(projectData: ProjectData) {
   try {
+    // Safety: never overwrite meaningful cloud data with empty/default data
+    if (!isDataMeaningful(projectData)) {
+      // Double-check what's in the cloud first
+      const { data: existing } = await supabase
+        .from('project_data')
+        .select('data')
+        .eq('id', 'main')
+        .maybeSingle();
+      if (existing?.data && isDataMeaningful(mergeWithDefaults(existing.data))) {
+        console.warn('Prevented overwriting meaningful cloud data with defaults');
+        return;
+      }
+    }
+
     const { error } = await supabase
       .from('project_data')
       .upsert({ id: 'main', data: projectData as any }, { onConflict: 'id' });

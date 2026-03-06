@@ -1,6 +1,7 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useProject } from '@/contexts/ProjectContext';
-import { Plus, X, Image } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { Plus, X, Loader2 } from 'lucide-react';
 
 interface ImageGalleryProps {
   galleryId: string;
@@ -8,22 +9,63 @@ interface ImageGalleryProps {
   placeholder?: string;
 }
 
+const BUCKET = 'project-files';
+
+async function uploadToStorage(file: File, galleryId: string): Promise<string> {
+  const ext = file.name.split('.').pop() || 'jpg';
+  const path = `images/${galleryId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+  const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+    cacheControl: '31536000',
+    upsert: false,
+  });
+  if (error) throw error;
+
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}
+
+async function removeFromStorage(url: string) {
+  try {
+    // Extract path from URL: ...project-files/images/xxx/yyy.jpg
+    const marker = `/${BUCKET}/`;
+    const idx = url.indexOf(marker);
+    if (idx === -1) return;
+    const path = url.slice(idx + marker.length);
+    await supabase.storage.from(BUCKET).remove([path]);
+  } catch {
+    // Best-effort cleanup
+  }
+}
+
 export function ImageGallery({ galleryId, columns = 2, placeholder = 'Añadir imagen' }: ImageGalleryProps) {
   const { data, addImage, removeImage } = useProject();
   const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
   const images = data.images[galleryId] || [];
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        addImage(galleryId, reader.result);
-      }
-    };
-    reader.readAsDataURL(file);
     e.target.value = '';
+
+    setUploading(true);
+    try {
+      const publicUrl = await uploadToStorage(file, galleryId);
+      addImage(galleryId, publicUrl);
+    } catch (err) {
+      console.error('Upload failed:', err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemove = async (index: number) => {
+    const url = images[index];
+    removeImage(galleryId, index);
+    if (url && url.startsWith('http')) {
+      await removeFromStorage(url);
+    }
   };
 
   return (
@@ -32,7 +74,7 @@ export function ImageGallery({ galleryId, columns = 2, placeholder = 'Añadir im
         <div key={i} className="relative group rounded-xl overflow-hidden border border-border bg-card">
           <img src={src} alt={`${galleryId}-${i}`} className="w-full max-h-[400px] object-contain bg-secondary/30 p-2" />
           <button
-            onClick={() => removeImage(galleryId, i)}
+            onClick={() => handleRemove(i)}
             className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
           >
             <X size={14} />
@@ -40,13 +82,23 @@ export function ImageGallery({ galleryId, columns = 2, placeholder = 'Añadir im
         </div>
       ))}
       <button
-        onClick={() => fileRef.current?.click()}
-        className="bg-card rounded-xl border-2 border-dashed border-border p-6 text-center hover:border-primary/50 transition-colors flex flex-col items-center justify-center gap-2 min-h-[120px]"
+        onClick={() => !uploading && fileRef.current?.click()}
+        disabled={uploading}
+        className="bg-card rounded-xl border-2 border-dashed border-border p-6 text-center hover:border-primary/50 transition-colors flex flex-col items-center justify-center gap-2 min-h-[120px] disabled:opacity-50"
       >
-        <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-          <Plus size={20} className="text-muted-foreground" />
-        </div>
-        <p className="text-sm text-muted-foreground">{placeholder}</p>
+        {uploading ? (
+          <>
+            <Loader2 size={20} className="animate-spin text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">Subiendo...</p>
+          </>
+        ) : (
+          <>
+            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+              <Plus size={20} className="text-muted-foreground" />
+            </div>
+            <p className="text-sm text-muted-foreground">{placeholder}</p>
+          </>
+        )}
       </button>
       <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
     </div>
