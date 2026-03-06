@@ -16,13 +16,6 @@ export function Mediciones() {
         <DynamicTableBlock sectionId="medicion-dc-extra" />
       </div>
 
-      <div className="w-full h-px bg-border my-6" />
-
-      <h2 className="text-lg font-semibold text-foreground mb-3">📈 Medición de Ganancia</h2>
-      <div className="bg-card rounded-xl border border-border p-5 mb-6">
-        <EditableTable tableId="ganancia-frecuencia" title="Ganancia en Lazo Abierto (por frecuencia)" showAddRow showColumnControls showMeta />
-        <DynamicTableBlock sectionId="ganancia-frecuencia-extra" />
-      </div>
 
       <div className="w-full h-px bg-border my-6" />
 
