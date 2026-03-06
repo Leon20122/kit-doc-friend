@@ -781,10 +781,9 @@ export function useProjectStore() {
 
   // Save to both localStorage and cloud on every change
   const saveToCloudMarked = useRef(debounce(async (d: ProjectData) => {
-    savingNow.current = true;
+    syncRef.current.saving = true;
     await saveToCloud(d);
-    // Reset after a short delay to allow realtime event to arrive
-    setTimeout(() => { savingNow.current = false; }, 2000);
+    setTimeout(() => { syncRef.current.saving = false; }, 2000);
   }, 1500)).current;
 
   useEffect(() => {
