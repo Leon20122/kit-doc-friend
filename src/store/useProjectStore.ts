@@ -390,13 +390,7 @@ const defaultData: ProjectData = {
     'conclusiones-mejoras': {
       id: 'conclusiones-mejoras',
       headers: ['Mejora', 'Beneficio', 'Dificultad'],
-      rows: [
-        { id: 'cm1', cells: ['Espejo de corriente Wilson', 'Mayor CMRR y estabilidad de Iee', 'Media'] },
-        { id: 'cm2', cells: ['Darlington en etapa de ganancia', 'Mayor ganancia total', 'Baja'] },
-        { id: 'cm3', cells: ['Protección de salida', 'Limitación de corriente', 'Media'] },
-        { id: 'cm4', cells: ['Diseño PCB', 'Mejor rendimiento y reproducibilidad', 'Alta'] },
-        { id: 'cm5', cells: ['Ajuste de offset', 'Reducir voltaje de offset a la salida', 'Baja'] },
-      ],
+      rows: [],
     },
     'problemas-comunes': {
       id: 'problemas-comunes',
@@ -585,6 +579,7 @@ const defaultData: ProjectData = {
     'table-meta-diseno-etapa-ganancia': '{"name":"","date":"2026-02-06"}',
     'table-meta-sim-ac-resultados': '{"name":"","date":"2026-03-20"}',
     'problems-list': '[{"id":"p1","title":"Problema #001: Salida Saturada","date":"2023-10-18","symptom":"","diagnosis":"","rootCause":"Los transistores Q1 y Q2 tenían β significativamente diferentes (Q1: β=180, Q2: β=240).","solution":"","lesson":""},{"id":"p2","title":"Problema #002: Oscilaciones a Alta Frecuencia","date":"2023-10-20","symptom":"Se observaban oscilaciones de ~5MHz superpuestas a la señal de salida.","diagnosis":"","rootCause":"Sin compensación de frecuencia, margen de fase insuficiente.","solution":"Se agregó capacitor de compensación Miller (Cc = 33pF), logrando margen de fase de 62°.","lesson":""}]',
+    'lecciones-aprendidas': '',
   },
   images: {
     'diseno-esquematico-default': ['https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/diseno-esquematico-default/1772826473716-5n1geq.png'],
