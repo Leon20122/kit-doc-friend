@@ -25,6 +25,11 @@ export function Mediciones() {
       </div>
 
       <div className="w-full h-px bg-border my-6" />
+
+      <h2 className="text-lg font-semibold text-foreground mb-3">📷 Fotos de Osciloscopio</h2>
+      <div className="bg-card rounded-xl border border-border p-5">
+        <MultiImageGallery sectionId="mediciones-osciloscopio" columns={2} placeholder="Añadir foto de osciloscopio" defaultLabel="Fotos Osciloscopio" showDate />
+      </div>
     </div>
   );
 }
