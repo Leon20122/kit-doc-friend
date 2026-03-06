@@ -651,15 +651,17 @@ function loadData(): ProjectData {
 
 function saveData(data: ProjectData) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    // Strip base64 images from localStorage to save space
+    const liteData = { ...data, images: {} };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(liteData));
   } catch (e) {
     if (e instanceof DOMException && e.name === 'QuotaExceededError') {
-      console.warn('localStorage quota exceeded, clearing and retrying...');
       try {
         localStorage.removeItem(STORAGE_KEY);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        const liteData = { ...data, images: {} };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(liteData));
       } catch {
-        console.error('localStorage save failed even after clearing. Data is saved to cloud only.');
+        // Cloud-only save, no big deal
       }
     }
   }
