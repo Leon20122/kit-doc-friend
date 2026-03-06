@@ -532,17 +532,13 @@ const defaultData: ProjectData = {
     },
     'archivos-simulacion': {
       id: 'archivos-simulacion',
-      headers: ['Nombre del Archivo', 'Tipo', 'Descripción', 'Estado'],
-      rows: [
-        { id: 'asim1', cells: ['amplificador_opamp.asc', 'LTSpice', 'Esquemático principal del amplificador', 'Completado'] },
-      ],
+      headers: ['Nombre del Archivo', 'Tipo', 'Descripción', 'Estado', '_url'],
+      rows: [],
     },
     'archivos-pcb': {
       id: 'archivos-pcb',
-      headers: ['Nombre del Archivo', 'Tipo', 'Descripción', 'Estado'],
-      rows: [
-        { id: 'apcb1', cells: ['pcb_layout.kicad_pcb', 'KiCad', 'Diseño de PCB principal', 'Completado'] },
-      ],
+      headers: ['Nombre del Archivo', 'Tipo', 'Descripción', 'Estado', '_url'],
+      rows: [],
     },
   },
   activities: [
