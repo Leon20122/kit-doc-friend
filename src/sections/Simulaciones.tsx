@@ -39,15 +39,9 @@ export function Simulaciones() {
       </ToggleBlock>
 
       <ToggleBlock title="Análisis Transitorio (.TRAN)">
-        <h4 className="text-sm font-semibold text-foreground mb-2">Medición de Slew Rate</h4>
-        <EditableNote
-          noteId="sim-slew-rate"
-          placeholder="SR = ΔV / Δt = [valor medido] V/μs"
-          className="font-mono text-primary bg-secondary/50 min-h-[40px]"
-        />
-        <DynamicTableBlock sectionId="sim-tran-extra" />
-        <h4 className="text-sm font-semibold text-foreground mb-2 mt-3">📉 Formas de Onda Transitorias</h4>
+        <h4 className="text-sm font-semibold text-foreground mb-2">📉 Formas de Onda Transitorias</h4>
         <MultiImageGallery sectionId="sim-tran" columns={2} placeholder="Añadir gráfica transitoria" defaultLabel="Gráficas Transitorias" showDate />
+        <DynamicTableBlock sectionId="sim-tran-extra" />
       </ToggleBlock>
 
       <div className="w-full h-px bg-border my-6" />
