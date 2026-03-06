@@ -1,20 +1,14 @@
 import { useState } from 'react';
 import { Checklist } from '@/components/Checklist';
 import { Callout } from '@/components/Callout';
-import { EditableNote } from '@/components/EditableNote';
 import { useProject } from '@/contexts/ProjectContext';
-import { Plus, X, Pencil, Check } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 
 export function Objetivos() {
   const { data, updateNote } = useProject();
-  const [editingTitle, setEditingTitle] = useState<string | null>(null);
 
   // Editable sections stored in notes
   const generalObj = data.notes['obj-general'] || 'Diseñar, simular e implementar un amplificador operacional funcional utilizando transistores BJT discretos, demostrando comprensión de los principios de electrónica analógica.';
-  
-  const includesItems = (data.notes['obj-includes'] || 'Diseño con transistores BJT discretos\nSimulación SPICE completa\nPrototipo funcional en protoboard\nMediciones y caracterización\nDocumentación técnica completa').split('\n').filter(Boolean);
-  const excludesItems = (data.notes['obj-excludes'] || 'Requisitos estrictos de ganancia industrial\nFabricación PCB profesional\nEncapsulado final del circuito\nPruebas ambientales (temperatura, humedad)\nCertificación de componentes').split('\n').filter(Boolean);
-  const criteriaText = data.notes['obj-criteria'] || 'El circuito amplifica señales correctamente\nFunciona como seguidor de voltaje (Buffer, Av ≈ 1)\nOpera como amplificador inversor y no inversor\nLos resultados de simulación y medición son consistentes (< 20% diferencia)\nLa documentación está completa y con trazabilidad';
 
   return (
     <div className="animate-fade-in">
@@ -39,42 +33,6 @@ export function Objetivos() {
         <Checklist groupId="objetivos-especificos" />
       </div>
 
-      <div className="w-full h-px bg-border my-6" />
-
-      <h2 className="text-lg font-semibold text-foreground mb-3">📐 Alcance del Proyecto</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="bg-card rounded-xl border border-border p-5">
-          <h3 className="text-sm font-semibold text-success mb-3">✅ Incluye</h3>
-          <EditableList
-            items={includesItems}
-            onChange={items => updateNote('obj-includes', items.join('\n'))}
-            icon="✓"
-            iconClass="text-success"
-          />
-        </div>
-        <div className="bg-card rounded-xl border border-border p-5">
-          <h3 className="text-sm font-semibold text-destructive mb-3">❌ No Incluye</h3>
-          <EditableList
-            items={excludesItems}
-            onChange={items => updateNote('obj-excludes', items.join('\n'))}
-            icon="✗"
-            iconClass="text-destructive"
-          />
-        </div>
-      </div>
-
-      <div className="w-full h-px bg-border my-6" />
-
-      <h2 className="text-lg font-semibold text-foreground mb-3">🏆 Criterios de Éxito</h2>
-      <Callout type="success" icon="✅">
-        <strong className="block mb-2">El proyecto se considerará exitoso cuando:</strong>
-        <EditableList
-          items={criteriaText.split('\n').filter(Boolean)}
-          onChange={items => updateNote('obj-criteria', items.join('\n'))}
-          icon="✅"
-          iconClass=""
-        />
-      </Callout>
     </div>
   );
 }

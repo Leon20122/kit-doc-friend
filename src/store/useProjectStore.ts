@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface ChecklistItem {
   id: string;
@@ -591,23 +592,26 @@ const defaultData: ProjectData = {
 
 const STORAGE_KEY = 'opamp-project-data';
 
+function mergeWithDefaults(parsed: any): ProjectData {
+  return {
+    ...defaultData,
+    ...parsed,
+    images: parsed.images || {},
+    notes: { ...defaultData.notes, ...(parsed.notes || {}) },
+    tables: { ...defaultData.tables, ...(parsed.tables || {}) },
+    teamMembers: parsed.teamMembers || defaultData.teamMembers,
+    timeline: parsed.timeline || defaultData.timeline,
+    historyEntries: parsed.historyEntries || defaultData.historyEntries,
+    banner: parsed.banner || defaultData.banner,
+    objetivosSections: parsed.objetivosSections || defaultData.objetivosSections,
+  };
+}
+
 function loadData(): ProjectData {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      const parsed = JSON.parse(stored);
-      return {
-        ...defaultData,
-        ...parsed,
-        images: parsed.images || {},
-        notes: { ...defaultData.notes, ...(parsed.notes || {}) },
-        tables: { ...defaultData.tables, ...(parsed.tables || {}) },
-        teamMembers: parsed.teamMembers || defaultData.teamMembers,
-        timeline: parsed.timeline || defaultData.timeline,
-        historyEntries: parsed.historyEntries || defaultData.historyEntries,
-        banner: parsed.banner || defaultData.banner,
-        objetivosSections: parsed.objetivosSections || defaultData.objetivosSections,
-      };
+      return mergeWithDefaults(JSON.parse(stored));
     }
   } catch {}
   return defaultData;
@@ -626,12 +630,63 @@ function getInitials(name: string): string {
     .join('');
 }
 
+// Debounce helper
+function debounce<T extends (...args: any[]) => any>(fn: T, ms: number) {
+  let timer: ReturnType<typeof setTimeout>;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+}
+
+async function loadFromCloud(): Promise<ProjectData | null> {
+  try {
+    const { data, error } = await supabase
+      .from('project_data')
+      .select('data')
+      .eq('id', 'main')
+      .maybeSingle();
+    if (error) { console.error('Cloud load error:', error); return null; }
+    if (data?.data) return mergeWithDefaults(data.data);
+  } catch (e) { console.error('Cloud load exception:', e); }
+  return null;
+}
+
+async function saveToCloud(projectData: ProjectData) {
+  try {
+    const { error } = await supabase
+      .from('project_data')
+      .upsert({ id: 'main', data: projectData as any }, { onConflict: 'id' });
+    if (error) console.error('Cloud save error:', error);
+  } catch (e) { console.error('Cloud save exception:', e); }
+}
+
 export function useProjectStore() {
   const [data, setData] = useState<ProjectData>(loadData);
+  const [cloudLoaded, setCloudLoaded] = useState(false);
+  const saveToCloudDebounced = useRef(debounce(saveToCloud, 1500)).current;
 
+  // On mount: load from cloud (takes priority over localStorage)
+  useEffect(() => {
+    loadFromCloud().then(cloudData => {
+      if (cloudData) {
+        setData(cloudData);
+        saveData(cloudData); // sync localStorage too
+      } else {
+        // First time: push localStorage data to cloud
+        saveToCloud(loadData());
+      }
+      setCloudLoaded(true);
+    });
+  }, []);
+
+  // Save to both localStorage and cloud on every change
   useEffect(() => {
     saveData(data);
-  }, [data]);
+    if (cloudLoaded) {
+      saveToCloudDebounced(data);
+    }
+  }, [data, cloudLoaded]);
 
   const toggleCheckItem = useCallback((groupId: string, itemId: string) => {
     setData(prev => {
