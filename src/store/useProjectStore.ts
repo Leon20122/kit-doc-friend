@@ -807,6 +807,59 @@ export function useProjectStore() {
     });
   }, []);
 
+  const updateTableHeader = useCallback((tableId: string, headerIndex: number, value: string) => {
+    setData(prev => {
+      const table = prev.tables[tableId];
+      if (!table) return prev;
+      return {
+        ...prev,
+        tables: {
+          ...prev.tables,
+          [tableId]: {
+            ...table,
+            headers: table.headers.map((h, i) => (i === headerIndex ? value : h)),
+          },
+        },
+      };
+    });
+  }, []);
+
+  const addTableColumn = useCallback((tableId: string, headerName: string = 'Nueva') => {
+    setData(prev => {
+      const table = prev.tables[tableId];
+      if (!table) return prev;
+      return {
+        ...prev,
+        tables: {
+          ...prev.tables,
+          [tableId]: {
+            ...table,
+            headers: [...table.headers, headerName],
+            rows: table.rows.map(row => ({ ...row, cells: [...row.cells, ''] })),
+          },
+        },
+      };
+    });
+  }, []);
+
+  const removeTableColumn = useCallback((tableId: string, colIndex: number) => {
+    setData(prev => {
+      const table = prev.tables[tableId];
+      if (!table || table.headers.length <= 1) return prev;
+      return {
+        ...prev,
+        tables: {
+          ...prev.tables,
+          [tableId]: {
+            ...table,
+            headers: table.headers.filter((_, i) => i !== colIndex),
+            rows: table.rows.map(row => ({ ...row, cells: row.cells.filter((_, i) => i !== colIndex) })),
+          },
+        },
+      };
+    });
+  }, []);
+
   const addTableRow = useCallback((tableId: string) => {
     setData(prev => {
       const table = prev.tables[tableId];
@@ -1054,6 +1107,9 @@ export function useProjectStore() {
     removeCheckItem,
     updateCheckItemText,
     updateTableCell,
+    updateTableHeader,
+    addTableColumn,
+    removeTableColumn,
     addTableRow,
     removeTableRow,
     createTable,
