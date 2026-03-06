@@ -6,7 +6,7 @@ import { MultiImageGallery } from '@/components/MultiImageGallery';
 import { EditableTable } from '@/components/EditableTable';
 import { EditableNote } from '@/components/EditableNote';
 import { DynamicTableBlock } from '@/components/DynamicTableBlock';
-import { Plus, X, Pencil, Check } from 'lucide-react';
+import { Plus, X, Pencil, Check, GripVertical } from 'lucide-react';
 
 interface CalcSection {
   id: string;
@@ -21,17 +21,77 @@ const DEFAULT_CALC_SECTIONS: CalcSection[] = [
   { id: 'calc-ganancia-total', title: 'Ganancia Total Estimada', tableId: 'diseno-ganancia-total', noteId: 'diseno-ganancia-conclusion' },
 ];
 
+interface FlowBlock {
+  id: string;
+  label: string;
+}
+
+const DEFAULT_FLOW_BLOCKS: FlowBlock[] = [
+  { id: 'fb1', label: '📈 Etapa de\nReferencia' },
+  { id: 'fb2', label: '🪞 Etapa\nEspejo de Corriente' },
+  { id: 'fb3', label: 'V+ ──┐\nV- ──┘\n🔀 Par Diferencial' },
+  { id: 'fb4', label: '🔊 Etapa Final' },
+];
+
 export function DisenoCircuito() {
   const { data, updateNote, createTable } = useProject();
 
+  // Flow blocks
+  const flowKey = 'diseno-flow-blocks';
+  const flowRaw = data.notes[flowKey];
+  const flowBlocks: FlowBlock[] = flowRaw ? JSON.parse(flowRaw) : DEFAULT_FLOW_BLOCKS;
+  const [editingBlock, setEditingBlock] = useState<string | null>(null);
+  const [blockValue, setBlockValue] = useState('');
+
+  const saveFlow = (blocks: FlowBlock[]) => updateNote(flowKey, JSON.stringify(blocks));
+
+  const updateBlockLabel = (id: string) => {
+    saveFlow(flowBlocks.map(b => b.id === id ? { ...b, label: blockValue } : b));
+    setEditingBlock(null);
+  };
+
+  // Drag reorder for flow blocks
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const handleDragStart = (idx: number) => setDragIdx(idx);
+  const handleDrop = (idx: number) => {
+    if (dragIdx === null || dragIdx === idx) return;
+    const newBlocks = [...flowBlocks];
+    const [moved] = newBlocks.splice(dragIdx, 1);
+    newBlocks.splice(idx, 0, moved);
+    saveFlow(newBlocks);
+    setDragIdx(null);
+  };
+
+  // Calc sections
   const storageKey = 'diseno-calc-sections';
   const raw = data.notes[storageKey];
   const calcSections: CalcSection[] = raw ? JSON.parse(raw) : DEFAULT_CALC_SECTIONS;
+
+  // Section title editable
+  const sectionTitleKey = 'diseno-section-title';
+  const sectionTitle = data.notes[sectionTitleKey] || 'Etapas de diseño';
+  const [editingSectionTitle, setEditingSectionTitle] = useState(false);
+  const [sectionTitleValue, setSectionTitleValue] = useState('');
+
+  // Section description
+  const sectionDescKey = 'diseno-section-desc';
 
   const [editingTitle, setEditingTitle] = useState<string | null>(null);
   const [titleValue, setTitleValue] = useState('');
   const [showAddSection, setShowAddSection] = useState(false);
   const [newSectionTitle, setNewSectionTitle] = useState('');
+
+  // Drag reorder for calc sections
+  const [dragCalcIdx, setDragCalcIdx] = useState<number | null>(null);
+  const handleCalcDragStart = (idx: number) => setDragCalcIdx(idx);
+  const handleCalcDrop = (idx: number) => {
+    if (dragCalcIdx === null || dragCalcIdx === idx) return;
+    const newSections = [...calcSections];
+    const [moved] = newSections.splice(dragCalcIdx, 1);
+    newSections.splice(idx, 0, moved);
+    saveSections(newSections);
+    setDragCalcIdx(null);
+  };
 
   const saveSections = (sections: CalcSection[]) => {
     updateNote(storageKey, JSON.stringify(sections));
@@ -77,79 +137,135 @@ export function DisenoCircuito() {
       </Callout>
       
       <div className="flex flex-wrap items-center justify-center gap-3 mb-6 p-4 bg-card rounded-xl border border-border">
-        {['📈 Etapa de\nReferencia','🪞Etapa \nEspejo de Corriente',
-          'V+ ──┐\nV- ──┘\n🔀 Par Diferencial\n(Q1, Q2, Q3, Q4)',
-          '🔊 Etapa de\nEmisor común con carga activa',
-        ].map((block, i) => (
-          <div key={i} className="flex items-center gap-3">
+        {flowBlocks.map((block, i) => (
+          <div
+            key={block.id}
+            className="flex items-center gap-3"
+            draggable
+            onDragStart={() => handleDragStart(i)}
+            onDragOver={e => e.preventDefault()}
+            onDrop={() => handleDrop(i)}
+          >
             {i > 0 && <span className="text-primary text-xl">→</span>}
-            <div className="bg-secondary rounded-lg px-4 py-3 text-center text-xs text-foreground/90 whitespace-pre-line border border-border font-mono">
-              {block}
-            </div>
+            {editingBlock === block.id ? (
+              <div className="bg-secondary rounded-lg px-3 py-2 border border-primary">
+                <textarea
+                  value={blockValue}
+                  onChange={e => setBlockValue(e.target.value)}
+                  onBlur={() => updateBlockLabel(block.id)}
+                  onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); updateBlockLabel(block.id); } }}
+                  className="bg-transparent text-xs text-foreground outline-none resize-none w-32 min-h-[50px] font-mono"
+                  autoFocus
+                />
+              </div>
+            ) : (
+              <div
+                className="bg-secondary rounded-lg px-4 py-3 text-center text-xs text-foreground/90 whitespace-pre-line border border-border font-mono cursor-pointer hover:border-primary/50 transition-colors flex items-center gap-1"
+                onClick={() => { setEditingBlock(block.id); setBlockValue(block.label); }}
+              >
+                <GripVertical size={10} className="text-muted-foreground opacity-50" />
+                {block.label}
+              </div>
+            )}
           </div>
         ))}
       </div>
 
       <div className="w-full h-px bg-border my-6" />
 
-      <h2 className="text-lg font-semibold text-foreground mb-3">🔢 Cálculos de Diseño</h2>
+      {/* Editable section title */}
+      <div className="flex items-center gap-2 mb-1">
+        {editingSectionTitle ? (
+          <input
+            value={sectionTitleValue}
+            onChange={e => setSectionTitleValue(e.target.value)}
+            onBlur={() => { updateNote(sectionTitleKey, sectionTitleValue); setEditingSectionTitle(false); }}
+            onKeyDown={e => { if (e.key === 'Enter') { updateNote(sectionTitleKey, sectionTitleValue); setEditingSectionTitle(false); } }}
+            className="text-lg font-semibold bg-transparent border-b border-border text-foreground outline-none"
+            autoFocus
+          />
+        ) : (
+          <h2
+            className="text-lg font-semibold text-foreground cursor-pointer hover:text-primary transition-colors flex items-center gap-2"
+            onClick={() => { setEditingSectionTitle(true); setSectionTitleValue(sectionTitle); }}
+          >
+            🔢 {sectionTitle}
+            <Pencil size={12} className="text-muted-foreground" />
+          </h2>
+        )}
+      </div>
+
+      {/* Editable description below title */}
+      <EditableNote
+        noteId={sectionDescKey}
+        placeholder="Descripción de la sección..."
+        className="text-sm text-muted-foreground mb-4 min-h-[30px]"
+      />
 
       {calcSections.map((section, idx) => (
-        <ToggleBlock
+        <div
           key={section.id}
-          defaultOpen={idx === 0}
-          title={
-            editingTitle === section.id ? (
-              <div className="flex items-center gap-2 flex-1" onClick={e => e.stopPropagation()}>
-                <input
-                  value={titleValue}
-                  onChange={e => setTitleValue(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter') confirmEditTitle(section.id); }}
-                  className="text-sm font-medium bg-transparent border-b border-border text-foreground outline-none flex-1"
-                  autoFocus
-                />
-                <button onClick={(e) => { e.stopPropagation(); confirmEditTitle(section.id); }} className="text-success"><Check size={14} /></button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 flex-1 group">
-                <span>{section.title}</span>
-                <button
-                  onClick={(e) => { e.stopPropagation(); startEditTitle(section); }}
-                  className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground p-0.5"
-                >
-                  <Pencil size={12} />
-                </button>
-                {calcSections.length > 1 && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); removeCalcSection(section.id); }}
-                    className="opacity-0 group-hover:opacity-100 text-destructive p-0.5"
-                  >
-                    <X size={12} />
-                  </button>
-                )}
-              </div>
-            )
-          }
+          draggable
+          onDragStart={() => handleCalcDragStart(idx)}
+          onDragOver={e => e.preventDefault()}
+          onDrop={() => handleCalcDrop(idx)}
         >
-          <EditableTable tableId={section.tableId} showAddRow={true} />
-          {section.noteId && (
-            <EditableNote
-              noteId={section.noteId}
-              placeholder="Notas o fórmulas..."
-              className="font-mono text-primary bg-secondary/50 min-h-[40px] mt-3"
-            />
-          )}
-          {section.id === 'calc-ganancia-total' && (
-            <Callout type="success" icon="✅">
+          <ToggleBlock
+            defaultOpen={idx === 0}
+            title={
+              editingTitle === section.id ? (
+                <div className="flex items-center gap-2 flex-1" onClick={e => e.stopPropagation()}>
+                  <input
+                    value={titleValue}
+                    onChange={e => setTitleValue(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') confirmEditTitle(section.id); }}
+                    className="text-sm font-medium bg-transparent border-b border-border text-foreground outline-none flex-1"
+                    autoFocus
+                  />
+                  <button onClick={(e) => { e.stopPropagation(); confirmEditTitle(section.id); }} className="text-success"><Check size={14} /></button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 flex-1 group">
+                  <GripVertical size={12} className="text-muted-foreground opacity-50" />
+                  <span>{section.title}</span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); startEditTitle(section); }}
+                    className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-foreground p-0.5"
+                  >
+                    <Pencil size={12} />
+                  </button>
+                  {calcSections.length > 1 && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); removeCalcSection(section.id); }}
+                      className="opacity-0 group-hover:opacity-100 text-destructive p-0.5"
+                    >
+                      <X size={12} />
+                    </button>
+                  )}
+                </div>
+              )
+            }
+          >
+            <EditableTable tableId={section.tableId} showAddRow showColumnControls showMeta />
+            {section.noteId && (
               <EditableNote
-                noteId="diseno-ganancia-conclusion"
-                placeholder="Conclusión sobre la ganancia estimada..."
-                className="bg-transparent border-none min-h-[40px] p-0"
+                noteId={section.noteId}
+                placeholder="Notas o fórmulas..."
+                className="font-mono text-primary bg-secondary/50 min-h-[40px] mt-3"
               />
-            </Callout>
-          )}
-          <DynamicTableBlock sectionId={`${section.tableId}-extra`} />
-        </ToggleBlock>
+            )}
+            {section.id === 'calc-ganancia-total' && (
+              <Callout type="success" icon="✅">
+                <EditableNote
+                  noteId="diseno-ganancia-conclusion"
+                  placeholder="Conclusión sobre la ganancia estimada..."
+                  className="bg-transparent border-none min-h-[40px] p-0"
+                />
+              </Callout>
+            )}
+            <DynamicTableBlock sectionId={`${section.tableId}-extra`} />
+          </ToggleBlock>
+        </div>
       ))}
 
       {showAddSection ? (

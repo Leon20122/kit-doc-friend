@@ -49,7 +49,7 @@ export function ProblemasSoluciones() {
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📋 Registro de Troubleshooting</h2>
       <div className="bg-card rounded-xl border border-border p-5 mb-6">
-        <EditableTable tableId="troubleshooting" />
+        <EditableTable tableId="troubleshooting" showColumnControls />
       </div>
 
       <div className="w-full h-px bg-border my-6" />
@@ -111,13 +111,6 @@ export function ProblemasSoluciones() {
       <button onClick={addProblem} className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 mt-3 mb-6">
         <Plus size={16} /> Añadir nuevo problema
       </button>
-
-      <div className="w-full h-px bg-border my-6" />
-
-      <h2 className="text-lg font-semibold text-foreground mb-3">📖 Problemas Comunes en Op-Amps (Referencia)</h2>
-      <div className="bg-card rounded-xl border border-border p-5">
-        <EditableTable tableId="problemas-comunes" />
-      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { EditableTable } from '@/components/EditableTable';
+import { DynamicTableBlock } from '@/components/DynamicTableBlock';
 
 export function Especificaciones() {
   return (
@@ -9,17 +10,18 @@ export function Especificaciones() {
       </div>
       <h2 className="text-lg font-semibold text-foreground mb-3">📋 Información General del Proyecto</h2>
       <div className="bg-card rounded-xl border border-border p-5 mb-6">
-        <EditableTable tableId="info-general" />
+        <EditableTable tableId="info-general" showColumnControls />
       </div>
       <div className="w-full h-px bg-border my-6" />
       <h2 className="text-lg font-semibold text-foreground mb-3">📦 Lista de Componentes (BOM)</h2>
       <div className="bg-card rounded-xl border border-border p-5">
-        <EditableTable tableId="bom" />
+        <EditableTable tableId="bom" showColumnControls />
       </div>
       <div className="w-full h-px bg-border my-6" />
       <h2 className="text-lg font-semibold text-foreground mb-3">💰 Tabla de Costos</h2>
       <div className="bg-card rounded-xl border border-border p-5">
-        <EditableTable tableId="costos" />
+        <EditableTable tableId="costos" showAddRow showColumnControls />
+        <DynamicTableBlock sectionId="costos-extra" />
       </div>
     </div>
   );

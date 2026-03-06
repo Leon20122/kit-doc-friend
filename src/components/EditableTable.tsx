@@ -1,20 +1,31 @@
 import { useState, useRef } from 'react';
 import { useProject } from '@/contexts/ProjectContext';
-import { Trash2, Plus, Paperclip, ExternalLink } from 'lucide-react';
+import { Trash2, Plus, Paperclip, ExternalLink, X, Columns, Calendar } from 'lucide-react';
 
 interface EditableTableProps {
   tableId: string;
   title?: string;
   showAddRow?: boolean;
+  showColumnControls?: boolean;
+  showMeta?: boolean;
 }
 
-export function EditableTable({ tableId, title, showAddRow = true }: EditableTableProps) {
-  const { data, updateTableCell, addTableRow, removeTableRow } = useProject();
+export function EditableTable({ tableId, title, showAddRow = true, showColumnControls = false, showMeta = false }: EditableTableProps) {
+  const { data, updateTableCell, updateTableHeader, addTableColumn, removeTableColumn, addTableRow, removeTableRow, updateNote } = useProject();
   const table = data.tables[tableId];
   const [editingCell, setEditingCell] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
+  const [editingHeader, setEditingHeader] = useState<number | null>(null);
+  const [headerValue, setHeaderValue] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [pendingFileCell, setPendingFileCell] = useState<{ rowId: string; cellIndex: number } | null>(null);
+
+  // Meta (name/date) stored in notes
+  const metaKey = `table-meta-${tableId}`;
+  const metaRaw = data.notes[metaKey];
+  const meta: { name: string; date: string } = metaRaw ? JSON.parse(metaRaw) : { name: '', date: '' };
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [titleValue, setTitleValue] = useState('');
 
   if (!table) return null;
 
@@ -28,6 +39,20 @@ export function EditableTable({ tableId, title, showAddRow = true }: EditableTab
     setEditingCell(null);
   };
 
+  const startHeaderEdit = (index: number, currentValue: string) => {
+    setEditingHeader(index);
+    setHeaderValue(currentValue);
+  };
+
+  const commitHeaderEdit = (index: number) => {
+    updateTableHeader(tableId, index, headerValue);
+    setEditingHeader(null);
+  };
+
+  const updateMeta = (field: 'name' | 'date', value: string) => {
+    updateNote(metaKey, JSON.stringify({ ...meta, [field]: value }));
+  };
+
   const getBadgeColor = (val: string) => {
     const v = val.toLowerCase();
     if (v.includes('✓') || v.includes('resuelto') || v.includes('completado') || v.includes('cumple') || v.includes('inicial') || v.includes('nueva') || v.includes('sí'))
@@ -38,7 +63,7 @@ export function EditableTable({ tableId, title, showAddRow = true }: EditableTab
       return 'bg-destructive/20 text-destructive';
     if (v.includes('corrección') || v.includes('info'))
       return 'bg-info/20 text-info';
-    if (v.includes('baja') || v.includes('pendiente'))
+    if (v.includes('baja'))
       return 'bg-muted text-muted-foreground';
     return '';
   };
@@ -71,6 +96,39 @@ export function EditableTable({ tableId, title, showAddRow = true }: EditableTab
 
   return (
     <div className="animate-fade-in">
+      {/* Meta: name + date */}
+      {showMeta && (
+        <div className="flex items-center gap-3 mb-2">
+          {editingTitle ? (
+            <input
+              value={titleValue}
+              onChange={e => setTitleValue(e.target.value)}
+              onBlur={() => { updateMeta('name', titleValue); setEditingTitle(false); }}
+              onKeyDown={e => { if (e.key === 'Enter') { updateMeta('name', titleValue); setEditingTitle(false); } }}
+              className="text-sm font-semibold bg-transparent border-b border-border text-foreground outline-none flex-1"
+              placeholder="Nombre de la tabla..."
+              autoFocus
+            />
+          ) : (
+            <span
+              className="text-sm font-semibold text-foreground cursor-pointer hover:text-primary transition-colors"
+              onClick={() => { setEditingTitle(true); setTitleValue(meta.name); }}
+            >
+              {meta.name || <span className="text-muted-foreground italic">Sin nombre</span>}
+            </span>
+          )}
+          <div className="flex items-center gap-1">
+            <Calendar size={12} className="text-muted-foreground" />
+            <input
+              type="date"
+              value={meta.date}
+              onChange={e => updateMeta('date', e.target.value)}
+              className="text-xs bg-secondary/50 border border-border rounded px-2 py-0.5 text-muted-foreground outline-none"
+            />
+          </div>
+        </div>
+      )}
+
       {title && (
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-semibold text-foreground">{title}</h3>
@@ -82,10 +140,47 @@ export function EditableTable({ tableId, title, showAddRow = true }: EditableTab
           <thead>
             <tr className="bg-secondary/50">
               {table.headers.map((h, i) => (
-                <th key={i} className="px-3 py-2.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap">
-                  {h}
+                <th key={i} className="px-3 py-2.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap group/header">
+                  {editingHeader === i ? (
+                    <input
+                      value={headerValue}
+                      onChange={e => setHeaderValue(e.target.value)}
+                      onBlur={() => commitHeaderEdit(i)}
+                      onKeyDown={e => e.key === 'Enter' && commitHeaderEdit(i)}
+                      className="w-full bg-input border border-ring rounded px-2 py-0.5 text-xs text-foreground outline-none uppercase"
+                      autoFocus
+                    />
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <span
+                        className="cursor-pointer hover:text-foreground transition-colors"
+                        onClick={() => startHeaderEdit(i, h)}
+                      >
+                        {h}
+                      </span>
+                      {showColumnControls && table.headers.length > 1 && (
+                        <button
+                          onClick={() => removeTableColumn(tableId, i)}
+                          className="opacity-0 group-hover/header:opacity-100 text-destructive/60 hover:text-destructive p-0.5 transition-opacity"
+                        >
+                          <X size={10} />
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </th>
               ))}
+              {showColumnControls && (
+                <th className="px-1 w-8">
+                  <button
+                    onClick={() => addTableColumn(tableId)}
+                    className="text-muted-foreground hover:text-primary p-1 transition-colors"
+                    title="Añadir columna"
+                  >
+                    <Columns size={14} />
+                  </button>
+                </th>
+              )}
               <th className="w-8"></th>
             </tr>
           </thead>
@@ -134,6 +229,7 @@ export function EditableTable({ tableId, title, showAddRow = true }: EditableTab
                     )}
                   </td>
                 ))}
+                {showColumnControls && <td></td>}
                 <td className="px-1">
                   <button
                     onClick={() => removeTableRow(tableId, row.id)}

@@ -12,7 +12,7 @@ export function Mediciones() {
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📐 Medición de Punto DC</h2>
       <div className="bg-card rounded-xl border border-border p-5 mb-6">
-        <EditableTable tableId="medicion-dc" showAddRow={true} />
+        <EditableTable tableId="medicion-dc" showAddRow showColumnControls showMeta />
         <DynamicTableBlock sectionId="medicion-dc-extra" />
       </div>
 
@@ -20,7 +20,7 @@ export function Mediciones() {
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📈 Medición de Ganancia</h2>
       <div className="bg-card rounded-xl border border-border p-5 mb-6">
-        <EditableTable tableId="ganancia-frecuencia" title="Ganancia en Lazo Abierto (por frecuencia)" showAddRow={true} />
+        <EditableTable tableId="ganancia-frecuencia" title="Ganancia en Lazo Abierto (por frecuencia)" showAddRow showColumnControls showMeta />
         <DynamicTableBlock sectionId="ganancia-frecuencia-extra" />
       </div>
 
