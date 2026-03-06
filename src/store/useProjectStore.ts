@@ -405,6 +405,17 @@ const defaultData: ProjectData = {
         { id: 'pc5', cells: ['Ruido excesivo', 'Fuente ruidosa, GND loops, acoplamiento', 'Mejorar desacoplo, verificar ruteo GND'] },
       ],
     },
+    'costos': {
+      id: 'costos',
+      headers: ['Componente', 'Cantidad', 'Precio Unitario', 'Subtotal'],
+      rows: [
+        { id: 'cost1', cells: ['Transistor 2N2222', '4', '$0.50', '$2.00'] },
+        { id: 'cost2', cells: ['Transistor 2N2907', '3', '$0.60', '$1.80'] },
+        { id: 'cost3', cells: ['Resistencias (surtido)', '12', '$0.10', '$1.20'] },
+        { id: 'cost4', cells: ['Capacitores', '3', '$0.30', '$0.90'] },
+        { id: 'cost5', cells: ['Protoboard', '1', '$5.00', '$5.00'] },
+      ],
+    },
     'consideraciones-practicas': {
       id: 'consideraciones-practicas',
       headers: ['Aspecto', 'Recomendación', 'Aplicado'],
@@ -807,6 +818,59 @@ export function useProjectStore() {
     });
   }, []);
 
+  const updateTableHeader = useCallback((tableId: string, headerIndex: number, value: string) => {
+    setData(prev => {
+      const table = prev.tables[tableId];
+      if (!table) return prev;
+      return {
+        ...prev,
+        tables: {
+          ...prev.tables,
+          [tableId]: {
+            ...table,
+            headers: table.headers.map((h, i) => (i === headerIndex ? value : h)),
+          },
+        },
+      };
+    });
+  }, []);
+
+  const addTableColumn = useCallback((tableId: string, headerName: string = 'Nueva') => {
+    setData(prev => {
+      const table = prev.tables[tableId];
+      if (!table) return prev;
+      return {
+        ...prev,
+        tables: {
+          ...prev.tables,
+          [tableId]: {
+            ...table,
+            headers: [...table.headers, headerName],
+            rows: table.rows.map(row => ({ ...row, cells: [...row.cells, ''] })),
+          },
+        },
+      };
+    });
+  }, []);
+
+  const removeTableColumn = useCallback((tableId: string, colIndex: number) => {
+    setData(prev => {
+      const table = prev.tables[tableId];
+      if (!table || table.headers.length <= 1) return prev;
+      return {
+        ...prev,
+        tables: {
+          ...prev.tables,
+          [tableId]: {
+            ...table,
+            headers: table.headers.filter((_, i) => i !== colIndex),
+            rows: table.rows.map(row => ({ ...row, cells: row.cells.filter((_, i) => i !== colIndex) })),
+          },
+        },
+      };
+    });
+  }, []);
+
   const addTableRow = useCallback((tableId: string) => {
     setData(prev => {
       const table = prev.tables[tableId];
@@ -1054,6 +1118,9 @@ export function useProjectStore() {
     removeCheckItem,
     updateCheckItemText,
     updateTableCell,
+    updateTableHeader,
+    addTableColumn,
+    removeTableColumn,
     addTableRow,
     removeTableRow,
     createTable,

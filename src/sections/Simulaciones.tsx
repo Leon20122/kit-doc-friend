@@ -14,7 +14,7 @@ export function Simulaciones() {
 
       <h2 className="text-lg font-semibold text-foreground mb-3">🖥️ Software Utilizado</h2>
       <div className="bg-card rounded-xl border border-border p-5 mb-4">
-        <EditableTable tableId="sim-software" showAddRow={true} />
+        <EditableTable tableId="sim-software" showAddRow showColumnControls />
       </div>
 
       <div className="w-full h-px bg-border my-6" />
@@ -23,7 +23,7 @@ export function Simulaciones() {
 
       <ToggleBlock title="Análisis DC - Punto de Operación (.OP)" defaultOpen>
         <h4 className="text-sm font-semibold text-foreground mb-2">Resultados por Transistor</h4>
-        <EditableTable tableId="sim-dc-resultados" showAddRow={true} />
+        <EditableTable tableId="sim-dc-resultados" showAddRow showColumnControls showMeta />
         <DynamicTableBlock sectionId="sim-dc-extra" />
         <h4 className="text-sm font-semibold text-foreground mb-2 mt-4">📷 Gráficas del Análisis DC</h4>
         <MultiImageGallery sectionId="sim-dc" columns={2} placeholder="Añadir gráfica DC" defaultLabel="Gráficas DC" showDate />
@@ -31,7 +31,7 @@ export function Simulaciones() {
 
       <ToggleBlock title="Análisis AC - Respuesta en Frecuencia (.AC)">
         <h4 className="text-sm font-semibold text-foreground mb-2">Resultados del Análisis AC</h4>
-        <EditableTable tableId="sim-ac-resultados" showAddRow={true} />
+        <EditableTable tableId="sim-ac-resultados" showAddRow showColumnControls showMeta />
         <DynamicTableBlock sectionId="sim-ac-extra" />
         <h4 className="text-sm font-semibold text-foreground mb-2 mt-4">📈 Gráficas de Respuesta en Frecuencia (AC)</h4>
         <MultiImageGallery sectionId="sim-ac" columns={1} placeholder="Añadir gráfica AC" defaultLabel="Gráficas AC" showDate />
