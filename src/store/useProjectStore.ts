@@ -566,7 +566,7 @@ const defaultData: ProjectData = {
     'mt-toggle-diferencial-title': '🔀 Etapa Diferencial',
     'mt-toggle-emisor-title': '🔊 Etapa de emisor común con carga activa',
     'mt-toggle-espejo-title': '🪞Etapa Espejo de Corriente',
-    'diseno-calc-sections': '[{"id":"calc-par-dif","title":"Fuente de Corriente","tableId":"diseno-par-diferencial","noteId":"diseno-formula-iee"},{"id":"calc-etapa-gan","title":"Etapa Par diferencial (carga pasiva)","tableId":"diseno-etapa-ganancia"},{"id":"calc-ganancia-total","title":"Ganancia Total Estimada","tableId":"diseno-ganancia-total","noteId":"diseno-ganancia-conclusion"}]',
+    'diseno-calc-sections': '[{"id":"calc-par-dif","title":"Fuente de Corriente","tableId":"diseno-par-diferencial","noteId":"diseno-formula-iee"},{"id":"calc-1772832201413","title":"Espejo de corriente","tableId":"diseno-dyn-1772832201413","noteId":"diseno-note-1772832201413"},{"id":"calc-etapa-gan","title":"Etapa Par diferencial (carga pasiva)","tableId":"diseno-etapa-ganancia"},{"id":"calc-1772832222716","title":"Etapa Final","tableId":"diseno-dyn-1772832222716","noteId":"diseno-note-1772832222716"},{"id":"calc-ganancia-total","title":"Ganancia Total Estimada","tableId":"diseno-ganancia-total","noteId":"diseno-ganancia-conclusion"}]',
     'gallery-blocks-diseno-esquematico': '[{"id":"diseno-esquematico-default","label":"Esquemático completo","date":"2026-02-20"}]',
     'gallery-blocks-sim-ac': '[{"id":"sim-ac-default","label":"Gráficas AC (Lazo abierto y Lazo cerrado)","date":"2026-02-20"}]',
     'gallery-blocks-mediciones-osciloscopio': '[{"id":"mediciones-osciloscopio-default","label":"Fotos Osciloscopio","date":"2026-02-11"}]',
