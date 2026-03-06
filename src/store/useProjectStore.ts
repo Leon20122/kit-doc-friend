@@ -710,7 +710,7 @@ async function saveToCloud(projectData: ProjectData) {
 export function useProjectStore() {
   const [data, setData] = useState<ProjectData>(loadData);
   const [cloudLoaded, setCloudLoaded] = useState(false);
-  const syncRef = useRef({ lastTimestamp: null as string | null, saving: false });
+  const syncRef = useRef({ lastTimestamp: null as string | null, saving: false, initialLoadDone: false });
 
   // On mount: load from cloud (takes priority over localStorage)
   useEffect(() => {
@@ -722,8 +722,10 @@ export function useProjectStore() {
         setData(cloudData);
         saveData(cloudData);
       } else {
+        // Only save defaults to cloud if there's truly no cloud data
         saveToCloud(loadData());
       }
+      syncRef.current.initialLoadDone = true;
       setCloudLoaded(true);
     });
 
@@ -779,7 +781,7 @@ export function useProjectStore() {
     };
   }, []);
 
-  // Save to both localStorage and cloud on every change
+  // Save to cloud on changes — but ONLY after initial cloud load is done
   const saveToCloudMarked = useRef(debounce(async (d: ProjectData) => {
     syncRef.current.saving = true;
     await saveToCloud(d);
@@ -787,6 +789,8 @@ export function useProjectStore() {
   }, 1500)).current;
 
   useEffect(() => {
+    // Don't save anything until the initial cloud load has completed
+    if (!syncRef.current.initialLoadDone) return;
     saveData(data);
     if (cloudLoaded) {
       saveToCloudMarked(data);
