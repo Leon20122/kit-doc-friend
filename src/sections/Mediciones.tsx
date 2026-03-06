@@ -25,17 +25,3 @@ export function Mediciones() {
       </div>
 
       <div className="w-full h-px bg-border my-6" />
-
-      <h2 className="text-lg font-semibold text-foreground mb-3">🔄 Comparación: Simulación vs Medición</h2>
-      <div className="bg-card rounded-xl border border-border p-5 mb-6">
-        <EditableTable tableId="comparacion-sim-med" showAddRow={true} />
-        <DynamicTableBlock sectionId="comparacion-sim-med-extra" />
-      </div>
-
-      <div className="w-full h-px bg-border my-6" />
-
-      <h2 className="text-lg font-semibold text-foreground mb-3">📸 Capturas del Osciloscopio</h2>
-      <MultiImageGallery sectionId="mediciones-fotos" columns={2} placeholder="Añadir captura del osciloscopio" defaultLabel="Capturas del osciloscopio" showDate />
-    </div>
-  );
-}
