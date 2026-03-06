@@ -640,7 +640,19 @@ function loadData(): ProjectData {
 }
 
 function saveData(data: ProjectData) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    if (e instanceof DOMException && e.name === 'QuotaExceededError') {
+      console.warn('localStorage quota exceeded, clearing and retrying...');
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch {
+        console.error('localStorage save failed even after clearing. Data is saved to cloud only.');
+      }
+    }
+  }
 }
 
 function getInitials(name: string): string {
