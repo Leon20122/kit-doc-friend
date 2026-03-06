@@ -3,6 +3,7 @@ import { MultiImageGallery } from '@/components/MultiImageGallery';
 import { EditableTable } from '@/components/EditableTable';
 import { DynamicTableBlock } from '@/components/DynamicTableBlock';
 import { EditableNote } from '@/components/EditableNote';
+import { FileUploadTable } from '@/components/FileUploadTable';
 
 export function Simulaciones() {
   return (
@@ -53,7 +54,7 @@ export function Simulaciones() {
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📁 Archivos de Simulación</h2>
       <div className="bg-card rounded-xl border border-border p-5">
-        <EditableTable tableId="archivos-simulacion" showAddRow showColumnControls showMeta />
+        <FileUploadTable tableId="archivos-simulacion" bucketFolder="simulacion" />
       </div>
     </div>
   );

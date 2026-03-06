@@ -2,6 +2,7 @@ import { Checklist } from '@/components/Checklist';
 import { ToggleBlock } from '@/components/ToggleBlock';
 import { MultiImageGallery } from '@/components/MultiImageGallery';
 import { EditableTable } from '@/components/EditableTable';
+import { FileUploadTable } from '@/components/FileUploadTable';
 import { useProject } from '@/contexts/ProjectContext';
 
 export function Implementacion() {
@@ -57,7 +58,7 @@ export function Implementacion() {
 
       <h2 className="text-lg font-semibold text-foreground mb-3">📁 Archivos de PCB</h2>
       <div className="bg-card rounded-xl border border-border p-5">
-        <EditableTable tableId="archivos-pcb" showAddRow showColumnControls showMeta />
+        <FileUploadTable tableId="archivos-pcb" bucketFolder="pcb" />
       </div>
     </div>
   );
