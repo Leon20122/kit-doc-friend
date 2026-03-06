@@ -1,8 +1,14 @@
+import { useProject } from '@/contexts/ProjectContext';
 import { ToggleBlock } from '@/components/ToggleBlock';
 import { Callout } from '@/components/Callout';
 import { EditableNote } from '@/components/EditableNote';
 
 export function MarcoTeorico() {
+  const { data, updateNote } = useProject();
+
+  const getNote = (id: string, fallback: string) => data.notes[id] ?? fallback;
+  const setNote = (id: string, value: string) => updateNote(id, value);
+
   return (
     <div className="animate-fade-in">
       <div className="mb-6">
@@ -10,12 +16,22 @@ export function MarcoTeorico() {
         <p className="text-sm text-muted-foreground mt-1">Fundamentos teóricos del amplificador operacional y transistores BJT.</p>
       </div>
 
-      <h2 className="text-lg font-semibold text-foreground mb-3">📘 El Amplificador Operacional</h2>
-      <p className="text-sm text-foreground/80 mb-4 leading-relaxed">
-        Un amplificador operacional (op-amp) es un amplificador electrónico de alta ganancia con entrada diferencial y, normalmente, una salida única. Es uno de los bloques fundamentales de la electrónica analógica y se utiliza ampliamente en aplicaciones de procesamiento de señales.
-      </p>
+      <input
+        value={getNote('mt-titulo-opamp', '📘 El Amplificador Operacional')}
+        onChange={e => setNote('mt-titulo-opamp', e.target.value)}
+        className="text-lg font-semibold text-foreground mb-3 bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+      />
+      <EditableNote
+        noteId="mt-desc-opamp"
+        placeholder="Descripción del amplificador operacional..."
+        className="min-h-[60px] text-sm mb-4"
+      />
 
-      <h3 className="text-sm font-semibold text-foreground mb-2">Características Ideales vs Reales</h3>
+      <input
+        value={getNote('mt-titulo-ideal-real', 'Características Ideales vs Reales')}
+        onChange={e => setNote('mt-titulo-ideal-real', e.target.value)}
+        className="text-sm font-semibold text-foreground mb-2 bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+      />
       <div className="bg-card rounded-xl border border-border p-5 mb-6">
         <EditableNote
           noteId="opamp-ideal-real"
@@ -26,9 +42,17 @@ export function MarcoTeorico() {
 
       <div className="w-full h-px bg-border my-6" />
 
-      <h2 className="text-lg font-semibold text-foreground mb-3">🏗️ Arquitectura de Op-Amp Discreto</h2>
-      <p className="text-sm text-foreground/80 mb-4">Un amplificador operacional discreto típico se compone de tres etapas principales conectadas en cascada:</p>
-      
+      <input
+        value={getNote('mt-titulo-arquitectura', '🏗️ Arquitectura de Op-Amp Discreto')}
+        onChange={e => setNote('mt-titulo-arquitectura', e.target.value)}
+        className="text-lg font-semibold text-foreground mb-3 bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+      />
+      <EditableNote
+        noteId="mt-desc-arquitectura"
+        placeholder="Descripción de la arquitectura..."
+        className="min-h-[40px] text-sm mb-4"
+      />
+
       <div className="flex flex-wrap items-center justify-center gap-3 mb-6 p-4 bg-card rounded-xl border border-border">
         {['📈 Etapa de\nReferencia', '🪞Etapa \nEspejo de Corriente','🔀 Etapa\nDiferencial', '🔊 Etapa de\nEmisor común con carga activa'].map((block, i) => (
           <div key={i} className="flex items-center gap-3">
@@ -40,49 +64,45 @@ export function MarcoTeorico() {
         ))}
       </div>
 
-       <ToggleBlock title="📈 Etapa de Referencia">
-        <p className="text-sm text-foreground/80 mb-2"><strong>Función:</strong> Fija el nivel de voltaje y de corriente para el resto de las etapas del OpAmp</p>
-        <p className="text-sm text-foreground/80 mb-3"><strong>Componentes:</strong> El transistor NPN (Q8) como fuente de corriente (Iee).</p>
-        <h4 className="text-sm font-semibold text-foreground mb-2">Ecuaciones Clave</h4>
-        <div className="space-y-1">
-          {['Ad = gm × Rc', 'gm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)'].map((eq, i) => (
-            <div key={i} className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary">{eq}</div>
-          ))}
-        </div>
-      </ToggleBlock>
-
-       <ToggleBlock title="Etapa Espejo de Corriente">
-        <p className="text-sm text-foreground/80 mb-2"><strong>Función:</strong> Refleja la corriente que conduce a traves del transistor de la etapa de referencia.</p>
-        <ul className="text-sm text-foreground/80 space-y-1 ml-4 mb-3">
-          <li>• Emisor común con carga activa</li>
-        </ul>
-      </ToggleBlock>
-
-      <ToggleBlock title="Etapa Diferencial">
-        <p className="text-sm text-foreground/80 mb-2"><strong>Función:</strong> Amplifica la diferencia entre las dos señales de entrada (V+ y V-) mientras rechaza señales comunes.</p>
-        <p className="text-sm text-foreground/80 mb-3"><strong>Componentes:</strong> Par de transistores NPN (Q1, Q2) con fuente de corriente (Q5).</p>
-        <h4 className="text-sm font-semibold text-foreground mb-2">Ecuaciones Clave</h4>
-        <div className="space-y-1">
-          {['Ad = gm × Rc', 'gm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)'].map((eq, i) => (
-            <div key={i} className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary">{eq}</div>
-          ))}
-        </div>
-      </ToggleBlock>
-
-      <ToggleBlock title="Etapa de emisor común con carga activa">
-        <p className="text-sm text-foreground/80 mb-2"><strong>Función:</strong> Proporciona alta impedancia de salida y por tanto alta ganancia de voltaje.</p>
-        <h4 className="text-sm font-semibold text-foreground mb-2">Ecuaciones Clave</h4>
-        <div className="space-y-1">
-          {['Ad = gm × Rc', 'gm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)'].map((eq, i) => (
-            <div key={i} className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary">{eq}</div>
-          ))}
-        </div>
-      </ToggleBlock>
+      {/* Editable Toggles */}
+      {[
+        { id: 'mt-toggle-referencia', titleDefault: '📈 Etapa de Referencia', contentDefault: 'Función: Fija el nivel de voltaje y de corriente para el resto de las etapas del OpAmp\n\nComponentes: El transistor NPN (Q8) como fuente de corriente (Iee).\n\nEcuaciones Clave:\nAd = gm × Rc\ngm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)' },
+        { id: 'mt-toggle-espejo', titleDefault: 'Etapa Espejo de Corriente', contentDefault: 'Función: Refleja la corriente que conduce a través del transistor de la etapa de referencia.\n\n• Emisor común con carga activa' },
+        { id: 'mt-toggle-diferencial', titleDefault: 'Etapa Diferencial', contentDefault: 'Función: Amplifica la diferencia entre las dos señales de entrada (V+ y V-) mientras rechaza señales comunes.\n\nComponentes: Par de transistores NPN (Q1, Q2) con fuente de corriente (Q5).\n\nEcuaciones Clave:\nAd = gm × Rc\ngm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)' },
+        { id: 'mt-toggle-emisor', titleDefault: 'Etapa de emisor común con carga activa', contentDefault: 'Función: Proporciona alta impedancia de salida y por tanto alta ganancia de voltaje.\n\nEcuaciones Clave:\nAd = gm × Rc\ngm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)' },
+      ].map(toggle => (
+        <ToggleBlock
+          key={toggle.id}
+          title={
+            <input
+              value={getNote(`${toggle.id}-title`, toggle.titleDefault)}
+              onChange={e => { e.stopPropagation(); setNote(`${toggle.id}-title`, e.target.value); }}
+              onClick={e => e.stopPropagation()}
+              className="bg-transparent border-none outline-none text-sm font-medium text-foreground flex-1 w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+            />
+          }
+        >
+          <EditableNote
+            noteId={`${toggle.id}-content`}
+            placeholder="Escribe el contenido de esta sección..."
+            className="min-h-[100px] text-sm"
+          />
+        </ToggleBlock>
+      ))}
 
       <div className="w-full h-px bg-border my-6" />
 
-      <h2 className="text-lg font-semibold text-foreground mb-3">🔌 Transistor BJT — Repaso</h2>
-      <h3 className="text-sm font-semibold text-foreground mb-2">Modos de Operación</h3>
+      <input
+        value={getNote('mt-titulo-bjt', '🔌 Transistor BJT — Repaso')}
+        onChange={e => setNote('mt-titulo-bjt', e.target.value)}
+        className="text-lg font-semibold text-foreground mb-3 bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+      />
+      
+      <input
+        value={getNote('mt-titulo-modos', 'Modos de Operación')}
+        onChange={e => setNote('mt-titulo-modos', e.target.value)}
+        className="text-sm font-semibold text-foreground mb-2 bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+      />
       <div className="overflow-x-auto rounded-lg border border-border mb-4">
         <table className="w-full text-sm">
           <thead><tr className="bg-secondary/50">
@@ -104,12 +124,16 @@ export function MarcoTeorico() {
         </table>
       </div>
 
-      <h3 className="text-sm font-semibold text-foreground mb-2">Ecuaciones Fundamentales</h3>
-      <div className="space-y-1">
-        {['Ic = β × Ib', 'Ie = Ic + Ib = (β + 1) × Ib', 'Ic = Is × exp(Vbe / VT)', 'gm = Ic / VT ≈ 38.5 × Ic  [A/V]  (a 27°C)', 'rπ = β / gm = VT / Ib'].map((eq, i) => (
-          <div key={i} className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary">{eq}</div>
-        ))}
-      </div>
+      <input
+        value={getNote('mt-titulo-ecuaciones', 'Ecuaciones Fundamentales')}
+        onChange={e => setNote('mt-titulo-ecuaciones', e.target.value)}
+        className="text-sm font-semibold text-foreground mb-2 bg-transparent border-none outline-none w-full hover:bg-secondary/30 rounded px-1 transition-colors"
+      />
+      <EditableNote
+        noteId="mt-ecuaciones-bjt"
+        placeholder="Ecuaciones fundamentales del BJT..."
+        className="min-h-[100px] font-mono text-sm"
+      />
     </div>
   );
 }
