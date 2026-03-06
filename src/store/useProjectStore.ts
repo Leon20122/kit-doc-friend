@@ -651,18 +651,19 @@ function loadData(): ProjectData {
 
 function saveData(data: ProjectData) {
   try {
-    // Strip base64 images from localStorage to save space
-    const liteData = { ...data, images: {} };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(liteData));
+    // Images are now URLs (not base64), safe to store
+    const serialized = JSON.stringify(data);
+    // Only write to localStorage if it fits (< 4MB to be safe)
+    if (serialized.length < 4_000_000) {
+      localStorage.setItem(STORAGE_KEY, serialized);
+    } else {
+      // Too large for localStorage, skip — cloud is the source of truth
+      console.warn('Data too large for localStorage, relying on cloud only');
+    }
   } catch (e) {
     if (e instanceof DOMException && e.name === 'QuotaExceededError') {
-      try {
-        localStorage.removeItem(STORAGE_KEY);
-        const liteData = { ...data, images: {} };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(liteData));
-      } catch {
-        // Cloud-only save, no big deal
-      }
+      console.warn('localStorage quota exceeded, relying on cloud only');
+      try { localStorage.removeItem(STORAGE_KEY); } catch {}
     }
   }
 }
