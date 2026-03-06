@@ -542,6 +542,16 @@ const defaultData: ProjectData = {
         { id: 'archivos-pcb-1772826881141', cells: ['PCB_2.zip', 'KiCad', 'Diseño de la PCB del OpAmp', 'Completado', 'https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/pcb/1772826888645_PCB_2.zip'] },
       ],
     },
+    'diseno-dyn-1772832201413': {
+      id: 'diseno-dyn-1772832201413',
+      headers: ['Parámetro', 'Valor', 'Notas'],
+      rows: [],
+    },
+    'diseno-dyn-1772832222716': {
+      id: 'diseno-dyn-1772832222716',
+      headers: ['Parámetro', 'Valor', 'Notas'],
+      rows: [],
+    },
   },
   activities: [
     { id: 'a1', time: 'Hoy, 10:30 AM', text: 'Diseño del Circuito actualizado por Alejandro G. (Diagrama esquemático finalizado).', color: 'red' },
@@ -605,6 +615,23 @@ const defaultData: ProjectData = {
       'https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/impl-fotos-default/1772830629497-uflw8c.jpeg',
       'https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/impl-fotos-default/1772830655045-7bajjp.jpeg',
     ],
+    'diseno-etapas-default': [
+      'https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/diseno-etapas-default/1772831339604-ubapq3.png',
+      'https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/diseno-etapas-default/1772831388154-hlzf3x.png',
+    ],
+    'diseno-etapas-1772828904781': ['https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/diseno-etapas-1772828904781/1772831405899-v9mq6c.png'],
+    'diseno-etapas-1772828905919': ['https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/diseno-etapas-1772828905919/1772831494568-e5kxii.png'],
+    'diseno-etapas-1772828907460': ['https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/diseno-etapas-1772828907460/1772831530933-o8ztp6.png'],
+    'diseno-etapas-1772831712017': ['https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/diseno-etapas-1772831712017/1772831811751-j901od.png'],
+    'mediciones-osciloscopio-default': ['https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/mediciones-osciloscopio-default/1772832281661-9xi5p8.BMP'],
+    'mediciones-osciloscopio-1772832287054': ['https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/mediciones-osciloscopio-1772832287054/1772832302549-iotpn3.BMP'],
+    'mediciones-osciloscopio-1772832312600': [
+      'https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/mediciones-osciloscopio-1772832312600/1772832325062-34ze54.JPG',
+      'https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/mediciones-osciloscopio-1772832312600/1772832333550-s0h6l4.JPG',
+      'https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/mediciones-osciloscopio-1772832312600/1772832342683-je0pdt.JPG',
+      'https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/mediciones-osciloscopio-1772832312600/1772832350690-x855yp.JPG',
+      'https://bvnbyukzogdmjgomyxzc.supabase.co/storage/v1/object/public/project-files/images/mediciones-osciloscopio-1772832312600/1772832357829-pzl7jt.JPG',
+    ],
   },
   teamMembers: [
     { id: 'tm1', initials: 'SP', name: 'Sebastián Pupo', role: 'Diseño y Coordinación', color: 'bg-info', isLeader: true },
@@ -648,7 +675,7 @@ const defaultData: ProjectData = {
       title: 'Versión v2.0 — 2026-02-09',
       author: 'José Villa',
       items: [
-        '🐛 Se corrigió un problema de conexión en la fuente de corriente que hacia  que en el espejo de corriente y en el par diferencial no permitiera el correcto  paso de la corriente, mas si media voltaje. Lo que lo ocasionaba, era que no se conectaron  la base y el colector para forzar activa directa en el transistor. Con esto corregido, las simulaciones  y las mediciones resultaron más coherentes con los valores esperados.',
+        '🐛 Se corrigió un problema de conexión en la fuente de corriente que hacia  que en el espejo de corriente y en el par diferencial no permitiera el correcto  paso de la corriente, mas si media voltaje. Lo que lo ocasionaba, era que no se conectaron  la base y el colector para forzar activa directa en el transistor. Con esto corregido, las simulaciones  y las mediciones resultaron más coherentes (su comportamiento ya no variaba tanto)',
       ],
     },
     {
@@ -656,18 +683,19 @@ const defaultData: ProjectData = {
       title: 'Versión v1.1 — 2026-02-06',
       author: 'Equipo',
       items: [
-        '✨ Elección de valores de resistencia y pruebas en etapa espejo de corriente',
+        '✨Se seleccionaron los distintos valores de resistencia comerciales para calcular la corriente  que pasaría por la fuente de corriente del opamp en base a la información provista por el  datasheet sobre la cantidad maxima de corriente que el transistor 2N222 es capaz de soportar',
+        '✨ Una vez probado en el simulador las configuraciones de los circuitos, se procedió a realizar las las mediciones. Sin embargo, se notaba que habían discrepancias entre los valores arrojados  por el simulador que se asumió que se debían a las no linealidades del estos transistores',
       ],
     },
     {
       id: 'he3',
-      title: 'Versión v1.0 — 2026-02-04',
+      title: 'Versión 1.0 — 2026-02-04',
       author: 'Equipo',
       items: [
-        '✨ Creación de estructura del documento',
-        '✨ Definición de objetivos y alcance',
-        '✨ Marco teórico inicial',
-        '✨ Elección de tipo de transistor (BJT o MOSFET) y headroom del OpAmp',
+        '✨ Presentación del esquematico del opamp por parte del docente',
+        '✨ Ideas de modelos de transistores por parte del docente',
+        '✨ Busqueda de la disponibilidad de los transistores a utizar',
+        '✨ Selección de transistores (BJT) y Lista de componentes (BOM) v1',
       ],
     },
   ],
