@@ -11,14 +11,16 @@ export function Especificaciones() {
         <EditableTable tableId="info-general" />
       </div>
       <div className="w-full h-px bg-border my-6" />
-      <h2 className="text-lg font-semibold text-foreground mb-3">🎯 Especificaciones Target</h2>
-      <div className="bg-card rounded-xl border border-border p-5 mb-6">
-        <EditableTable tableId="specs-target" />
-      </div>
-      <div className="w-full h-px bg-border my-6" />
       <h2 className="text-lg font-semibold text-foreground mb-3">📦 Lista de Componentes (BOM)</h2>
       <div className="bg-card rounded-xl border border-border p-5">
         <EditableTable tableId="bom" />
       </div>
+            </div>
+      <div className="w-full h-px bg-border my-6" />
+      <h2 className="text-lg font-semibold text-foreground mb-3">💰 Tabla de Costos</h2>
+      <div className="bg-card rounded-xl border border-border p-5">
+        <CostTable tableId="costos" />
+      </div>
     </div>
   );
+}
