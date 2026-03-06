@@ -1,4 +1,5 @@
 import { EditableTable } from '@/components/EditableTable';
+
 export function Especificaciones() {
   return (
     <div className="animate-fade-in">
@@ -15,11 +16,10 @@ export function Especificaciones() {
       <div className="bg-card rounded-xl border border-border p-5">
         <EditableTable tableId="bom" />
       </div>
-            </div>
       <div className="w-full h-px bg-border my-6" />
       <h2 className="text-lg font-semibold text-foreground mb-3">💰 Tabla de Costos</h2>
       <div className="bg-card rounded-xl border border-border p-5">
-        <CostTable tableId="costos" />
+        <EditableTable tableId="costos" />
       </div>
     </div>
   );

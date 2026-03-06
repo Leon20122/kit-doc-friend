@@ -1,5 +1,6 @@
 import { ToggleBlock } from '@/components/ToggleBlock';
 import { Callout } from '@/components/Callout';
+import { EditableNote } from '@/components/EditableNote';
 
 export function MarcoTeorico() {
   return (
@@ -15,15 +16,6 @@ export function MarcoTeorico() {
       </p>
 
       <h3 className="text-sm font-semibold text-foreground mb-2">Características Ideales vs Reales</h3>
-      <div className="overflow-x-auto rounded-lg border border-border mb-6">
-        <table className="w-full text-sm">
-          <thead><tr className="bg-secondary/50">
-            <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Parámetro</th>
-            <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Ideal</th>
-            <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Real (Típico)</th>
-            <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Unidad</th>
-          </tr></thead>
-           <h3 className="text-sm font-semibold text-foreground mb-2">Características Ideales vs Reales</h3>
       <div className="bg-card rounded-xl border border-border p-5 mb-6">
         <EditableNote
           noteId="opamp-ideal-real"
@@ -31,8 +23,6 @@ export function MarcoTeorico() {
           className="min-h-[200px] font-mono text-sm"
         />
       </div>
-
-      <div className="w-full h-px bg-border my-6" />
 
       <div className="w-full h-px bg-border my-6" />
 
@@ -68,12 +58,12 @@ export function MarcoTeorico() {
         </ul>
       </ToggleBlock>
 
-      <ToggleBlock title="Etapa Diferencial ">
+      <ToggleBlock title="Etapa Diferencial">
         <p className="text-sm text-foreground/80 mb-2"><strong>Función:</strong> Amplifica la diferencia entre las dos señales de entrada (V+ y V-) mientras rechaza señales comunes.</p>
         <p className="text-sm text-foreground/80 mb-3"><strong>Componentes:</strong> Par de transistores NPN (Q1, Q2) con fuente de corriente (Q5).</p>
         <h4 className="text-sm font-semibold text-foreground mb-2">Ecuaciones Clave</h4>
         <div className="space-y-1">
-          {['Ad = gm × Rc', 'gm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente'].map((eq, i) => (
+          {['Ad = gm × Rc', 'gm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)'].map((eq, i) => (
             <div key={i} className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary">{eq}</div>
           ))}
         </div>
@@ -83,11 +73,10 @@ export function MarcoTeorico() {
         <p className="text-sm text-foreground/80 mb-2"><strong>Función:</strong> Proporciona alta impedancia de salida y por tanto alta ganancia de voltaje.</p>
         <h4 className="text-sm font-semibold text-foreground mb-2">Ecuaciones Clave</h4>
         <div className="space-y-1">
-          {['Ad = gm × Rc', 'gm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente'].map((eq, i) => (
+          {['Ad = gm × Rc', 'gm = Ic / VT   (donde VT ≈ 25mV a temperatura ambiente)'].map((eq, i) => (
             <div key={i} className="bg-secondary/50 rounded px-3 py-1.5 text-sm font-mono text-primary">{eq}</div>
           ))}
         </div>
-    
       </ToggleBlock>
 
       <div className="w-full h-px bg-border my-6" />

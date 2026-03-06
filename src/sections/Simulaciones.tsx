@@ -50,3 +50,6 @@ export function Simulaciones() {
       </ToggleBlock>
 
       <div className="w-full h-px bg-border my-6" />
+    </div>
+  );
+}
