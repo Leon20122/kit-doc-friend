@@ -699,8 +699,30 @@ async function loadFromCloud(): Promise<ProjectData | null> {
   return null;
 }
 
+function isDataMeaningful(projectData: ProjectData): boolean {
+  // Check if this data has user content beyond defaults
+  const noteCount = Object.keys(projectData.notes).length;
+  const imageCount = Object.values(projectData.images).reduce((sum, arr) => sum + arr.length, 0);
+  const tableRowCount = Object.values(projectData.tables).reduce((sum, t) => sum + t.rows.length, 0);
+  return noteCount > 5 || imageCount > 0 || tableRowCount > 10;
+}
+
 async function saveToCloud(projectData: ProjectData) {
   try {
+    // Safety: never overwrite meaningful cloud data with empty/default data
+    if (!isDataMeaningful(projectData)) {
+      // Double-check what's in the cloud first
+      const { data: existing } = await supabase
+        .from('project_data')
+        .select('data')
+        .eq('id', 'main')
+        .maybeSingle();
+      if (existing?.data && isDataMeaningful(mergeWithDefaults(existing.data))) {
+        console.warn('Prevented overwriting meaningful cloud data with defaults');
+        return;
+      }
+    }
+
     const { error } = await supabase
       .from('project_data')
       .upsert({ id: 'main', data: projectData as any }, { onConflict: 'id' });
