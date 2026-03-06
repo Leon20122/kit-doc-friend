@@ -747,7 +747,7 @@ export function useProjectStore() {
             setData(merged);
             saveData(merged);
             if (payload.new?.updated_at) {
-              lastSaveTimestamp.current = payload.new.updated_at;
+              syncRef.current.lastTimestamp = payload.new.updated_at;
             }
           }
         }
