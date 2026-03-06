@@ -664,27 +664,58 @@ async function saveToCloud(projectData: ProjectData) {
 export function useProjectStore() {
   const [data, setData] = useState<ProjectData>(loadData);
   const [cloudLoaded, setCloudLoaded] = useState(false);
-  const saveToCloudDebounced = useRef(debounce(saveToCloud, 1500)).current;
+  
+
+  const isLocalUpdate = useRef(false);
 
   // On mount: load from cloud (takes priority over localStorage)
   useEffect(() => {
     loadFromCloud().then(cloudData => {
       if (cloudData) {
         setData(cloudData);
-        saveData(cloudData); // sync localStorage too
+        saveData(cloudData);
       } else {
-        // First time: push localStorage data to cloud
         saveToCloud(loadData());
       }
       setCloudLoaded(true);
     });
+
+    // Subscribe to realtime changes from other devices
+    const channel = supabase
+      .channel('project-sync')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'project_data', filter: 'id=eq.main' },
+        (payload) => {
+          // Skip if this update was triggered by us
+          if (isLocalUpdate.current) {
+            isLocalUpdate.current = false;
+            return;
+          }
+          if (payload.new?.data) {
+            const merged = mergeWithDefaults(payload.new.data);
+            setData(merged);
+            saveData(merged);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Save to both localStorage and cloud on every change
+  const saveToCloudMarked = useRef(debounce((d: ProjectData) => {
+    isLocalUpdate.current = true;
+    saveToCloud(d);
+  }, 1500)).current;
+
   useEffect(() => {
     saveData(data);
     if (cloudLoaded) {
-      saveToCloudDebounced(data);
+      saveToCloudMarked(data);
     }
   }, [data, cloudLoaded]);
 
