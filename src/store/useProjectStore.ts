@@ -733,7 +733,7 @@ async function saveToCloud(projectData: ProjectData) {
 export function useProjectStore() {
   const [data, setData] = useState<ProjectData>(loadData);
   const [cloudLoaded, setCloudLoaded] = useState(false);
-  const syncRef = useRef({ lastTimestamp: null as string | null, saving: false, initialLoadDone: false });
+  const syncRef = useRef({ lastTimestamp: null as string | null, saving: false, initialLoadDone: false, dirty: false });
 
   // On mount: load from cloud (takes priority over localStorage)
   useEffect(() => {
@@ -745,7 +745,6 @@ export function useProjectStore() {
         setData(cloudData);
         saveData(cloudData);
       } else {
-        // Only save defaults to cloud if there's truly no cloud data
         saveToCloud(loadData());
       }
       syncRef.current.initialLoadDone = true;
@@ -759,12 +758,12 @@ export function useProjectStore() {
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'project_data', filter: 'id=eq.main' },
         (payload) => {
-          // Skip if we just saved
-          if (syncRef.current.saving) {
-            syncRef.current.saving = false;
+          // Skip if we have unsaved local changes or just saved
+          if (syncRef.current.saving || syncRef.current.dirty) {
             if (payload.new?.updated_at) {
               syncRef.current.lastTimestamp = payload.new.updated_at;
             }
+            syncRef.current.saving = false;
             return;
           }
           if (payload.new?.data) {
@@ -779,9 +778,10 @@ export function useProjectStore() {
       )
       .subscribe();
 
-    // Fallback polling every 10s in case realtime fails
+    // Fallback polling every 30s (increased from 10s to reduce conflicts)
     const pollInterval = setInterval(async () => {
-      if (syncRef.current.saving) return;
+      // Skip if we have unsaved local changes
+      if (syncRef.current.saving || syncRef.current.dirty) return;
       try {
         const { data: row } = await supabase
           .from('project_data')
@@ -795,7 +795,7 @@ export function useProjectStore() {
           saveData(merged);
         }
       } catch {}
-    }, 10000);
+    }, 30000);
 
     return () => {
       isActive = false;
@@ -808,12 +808,15 @@ export function useProjectStore() {
   const saveToCloudMarked = useRef(debounce(async (d: ProjectData) => {
     syncRef.current.saving = true;
     await saveToCloud(d);
+    // Mark as no longer dirty after successful save
+    syncRef.current.dirty = false;
     setTimeout(() => { syncRef.current.saving = false; }, 2000);
   }, 1500)).current;
 
   useEffect(() => {
-    // Don't save anything until the initial cloud load has completed
     if (!syncRef.current.initialLoadDone) return;
+    // Mark as dirty immediately when data changes locally
+    syncRef.current.dirty = true;
     saveData(data);
     if (cloudLoaded) {
       saveToCloudMarked(data);
