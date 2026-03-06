@@ -390,13 +390,7 @@ const defaultData: ProjectData = {
     'conclusiones-mejoras': {
       id: 'conclusiones-mejoras',
       headers: ['Mejora', 'Beneficio', 'Dificultad'],
-      rows: [
-        { id: 'cm1', cells: ['Espejo de corriente Wilson', 'Mayor CMRR y estabilidad de Iee', 'Media'] },
-        { id: 'cm2', cells: ['Darlington en etapa de ganancia', 'Mayor ganancia total', 'Baja'] },
-        { id: 'cm3', cells: ['Protección de salida', 'Limitación de corriente', 'Media'] },
-        { id: 'cm4', cells: ['Diseño PCB', 'Mejor rendimiento y reproducibilidad', 'Alta'] },
-        { id: 'cm5', cells: ['Ajuste de offset', 'Reducir voltaje de offset a la salida', 'Baja'] },
-      ],
+      rows: [],
     },
     'problemas-comunes': {
       id: 'problemas-comunes',
